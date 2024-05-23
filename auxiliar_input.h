@@ -1,47 +1,58 @@
-/* input_matrix() reads a gnuplot-compatible binary file, i.e. single precision *
-*  matrix stored in the following format:                                       *
-*                                                                               *
-*  <N+1>  <y0>   <y1>   <y2>  ...  <yN>                                         *
-*  <x0> <z0,0> <z0,1> <z0,2> ... <z0,N>                                         *
-*  <x1> <z1,0> <z1,1> <z1,2> ... <z1,N>                                         *
-*                                                                               *
-*  For example: input_matrix(T,fp,N,X0,Y0,L0);                                  *
-*  Reads a square matrix of size N from file descriptor "fp" into scalar field  *
-*  T, defined at points (X,Y).                                                  *
-*/
+/*
+ * input_matrix() reads a gnuplot-compatible binary file, i.e., single precision 
+ * matrix stored in the following format:
+ *
+ *  <N+1>  <y0>   <y1>   <y2>  ...  <yN>
+ *  <x0> <z0,0> <z0,1> <z0,2> ... <z0,N>
+ *  <x1> <z1,0> <z1,1> <z1,2> ... <z1,N>
+ *
+ * For example: input_matrix(T, fp, N, X0, Y0, L0);
+ * Reads a square matrix of size N from file descriptor "fp" into scalar field 
+ * T, defined at points (X,Y).
+ */
+
+// Define a structure to hold input matrix parameters
 struct InputMatrix {
-  // compulsory
-  scalar s;
-  FILE * fp;
-  // optional
-  int n;
-  double ox, oy, width, oz;
-  double arz;
+    scalar s;  // Scalar field to store the matrix values
+    FILE * fp; // File pointer for the binary input file
+    int n;     // Size of the matrix (optional)
+    double ox, oy, width, oz; // Offsets and dimensions (optional)
+    double arz; // Additional parameter (optional)
 };
 
+// Function to read and store the matrix from the binary file
 void input_matrix (struct InputMatrix p) {
-	scalar s = p.s;
-	if (p.width == 0.) p.width = L0;
+	scalar s = p.s; // Assign the scalar field
+	if (p.width == 0.0) p.width = L0; // Use default width if not provided
+
 	float width=0;
-	fread(&width, sizeof(float), 1, p.fp);
+	fread(&width, sizeof(float), 1, p.fp); // Read the matrix width from file
 
-	if (p.n != width) p.n = (int) width;
+	if (p.n != width) p.n = (int) width; // Set matrix size
 
-	float yp[p.n], xp[p.n];
-	float ** v = matrix_new (p.n, p.n, sizeof(float));
-	fread(&yp, sizeof(float), p.n, p.fp);
+	float yp[p.n], xp[p.n]; // Arrays to store y and x coordinates
+	float ** v = matrix_new (p.n, p.n, sizeof(float));  // Allocate memory for matrix
+	
+	fread(&yp, sizeof(float), p.n, p.fp); // Read y coordinates from file
 	for (int i = 0; i < p.n; i++) {
-		fread(&xp[i], sizeof(float), 1, p.fp);
+		fread(&xp[i], sizeof(float), 1, p.fp); // Read x coordinate for each row
 		for (int j = 0; j < p.n; j++) {
-			fread(&v[i][j], sizeof(float), 1, p.fp);
+			fread(&v[i][j], sizeof(float), 1, p.fp); // Read matrix values
 		}
 	}
+	
+	// Loop over the domain and assign matrix values to the scalar field
 	foreach() {
-		int i = (x - p.ox)*width/p.width, j = (y - p.oy)*width/p.width;
-		if (i >= 0 && i < width && j >= 0 && j < width)
-			s[] = v[i][j];
- 		else
-			s[] = 0.;
+		int i = (x - p.ox) * width / p.width;
+        int j = (y - p.oy) * width / p.width;
+        if (i >= 0 && i < width && j >= 0 && j < width) {
+            s[] = v[i][j];
+        } else {
+            s[] = 0.0;
+        }
 	}
+	
+	// Free the allocated memory
+	matrix_free(v);
 }
 
