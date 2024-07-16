@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title> - auxiliar_input.h</title>
+        <link href="http://basilisk.fr/css/custom.css" rel="stylesheet" media="screen, projection" type="text/css" />
+    <link href="http://basilisk.fr/css/print.css" rel="stylesheet" media="print" type= "text/css" />
+        <!--[if IE]><link href="http://basilisk.fr/css/ie.css" rel="stylesheet" media="screen, projection" type="text/css" /><![endif]-->
+    <link rel="stylesheet" href="http://basilisk.fr/css/basilisk.css"/>
+    <script src="http://basilisk.fr/js/jquery.min.js" type="text/javascript"></script>
+    <script src="http://basilisk.fr/js/jquery-ui.packed.js" type="text/javascript"></script>
+    <script src="http://basilisk.fr/js/plots.js" type="text/javascript"></script>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css"
+      integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j"
+      crossorigin="anonymous"/>
+<script defer
+	src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"
+	integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ"
+	crossorigin="anonymous">
+</script>
+  </head>
+  <body>
+    <div id="doc3" class="yui-t1">
+        <div id="yui-main">
+          <div id="maincol" class="yui-b">
+<div id="userbox">
+  <noscript>
+    <a href="http://basilisk.fr/_login">Login</a>
+    <a href="http://basilisk.fr/_logout">Logout</a>
+  </noscript>
+  &nbsp;
+  <a id="loginlink" class="login" href="http://basilisk.fr/_login">Login / Get an account</a>
+  <a id="logoutlink" class="login" href="http://basilisk.fr/_logout">Logout <span id="logged_in_user"></span></a>
+</div>
+<ul class="tabs">
+  <li class=selected><a href="http://basilisk.fr/auxiliar_input.h">view</a></li><li><a href="http://basilisk.fr/auxiliar_input.h?history">history</a></li>
+</ul>
+<div id="content">
+        <h1 class="pageTitle"><a href="http://basilisk.fr/auxiliar_input.h">auxiliar_input.h</a></h1>
+  <ul class="messages" id="messages"></ul>
+  <div id="status"></div>
+    <div id="TOC">
+<ul>
+<li><a href="#input_matrix-reads-a-gnuplot-compatible-binary-file"
+id="toc-input_matrix-reads-a-gnuplot-compatible-binary-file">input_matrix():
+reads a gnuplot-compatible binary file</a>
+<ul>
+<li><a
+href="#input_matrix-reads-and-store-the-matrix-from-the-binary-file"
+id="toc-input_matrix-reads-and-store-the-matrix-from-the-binary-file">input_matrix():
+reads and store the matrix from the binary file</a></li>
+<li><a
+href="#input_matrix_double-reads-and-store-the-matrix-from-a-double-precision-binary-file"
+id="toc-input_matrix_double-reads-and-store-the-matrix-from-a-double-precision-binary-file">input_matrix_double():
+reads and store the matrix from a double precision binary file</a></li>
+<li><a
+href="#read_matrix-reads-and-store-the-matrix-from-a-double-precision-binary-file"
+id="toc-read_matrix-reads-and-store-the-matrix-from-a-double-precision-binary-file">read_matrix():
+reads and store the matrix from a double precision binary file</a></li>
+</ul></li>
+</ul>
+</div>
+<h1
+id="input_matrix-reads-a-gnuplot-compatible-binary-file">input_matrix():
+reads a gnuplot-compatible binary file</h1>
+<p>These routines read a gnuplot-compatible binary file, i.e., single
+precision matrix stored in the following format:</p>
+<pre><code> &lt;N+1&gt;  &lt;y0&gt;   &lt;y1&gt;   &lt;y2&gt;  ...  &lt;yN&gt;
+ &lt;x0&gt; &lt;z0,0&gt; &lt;z0,1&gt; &lt;z0,2&gt; ... &lt;z0,N&gt;
+ &lt;x1&gt; &lt;z1,0&gt; &lt;z1,1&gt; &lt;z1,2&gt; ... &lt;z1,N&gt;</code></pre>
+<p>For example: using <code>input_matrix(T, fp, N, X0, Y0, L0)</code>
+will read a square matrix of size <code>N</code> from file descriptor
+<code>fp</code> into a <span class="dt">scalar</span> field <code>T</code>.</p>
+<h2
+id="input_matrix-reads-and-store-the-matrix-from-the-binary-file">input_matrix():
+reads and store the matrix from the binary file</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> input_matrix<span class="op">(</span><span class="dt">scalar</span> s<span class="op">,</span> <span class="dt">FILE</span> <span class="op">*</span> fp<span class="op">,</span> <span class="dt">int</span> n <span class="op">=</span> N<span class="op">,</span> <span class="dt">double</span> ox<span class="op">=</span>X0<span class="op">,</span> <span class="dt">double</span> oy<span class="op">=</span>Y0<span class="op">,</span> <span class="dt">double</span> width<span class="op">=</span>L0<span class="op">){</span><span id=16></span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span id=17></span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> nfile<span class="op">;</span><span id=18></span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  fread<span class="op">(&amp;</span>nfile<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>          <span class="co">// Read the matrix size from file<span id=19></span></span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  n <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>nfile<span class="op">;</span>                               <span class="co">// Set matrix size<span id=20></span></span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span id=21></span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> yp<span class="op">[</span>n<span class="op">],</span> xp<span class="op">[</span>n<span class="op">];</span>                           <span class="co">// Arrays to store y and x coordinates<span id=22></span></span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> <span class="op">**</span>v <span class="op">=</span> matrix_new<span class="op">(</span>n<span class="op">,</span> n<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">));</span>  <span class="co">// Allocate memory for matrix<span id=23></span></span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span id=24></span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  fread<span class="op">(&amp;</span>yp<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> n<span class="op">,</span> fp<span class="op">);</span>             <span class="co">// Read y coordinates from file<span id=25></span></span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++){</span><span id=26></span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    fread<span class="op">(&amp;</span>xp<span class="op">[</span>i<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>        <span class="co">// Read x coordinate for each row<span id=27></span></span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n<span class="op">;</span> j<span class="op">++){</span><span id=28></span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      fread<span class="op">(&amp;</span>v<span class="op">[</span>i<span class="op">][</span>j<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>    <span class="co">// Read matrix values<span id=29></span></span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=30></span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=31></span><span id=32></span></span></code></pre></div>
+<p>Loop over the domain and assign matrix values to the <span class="dt">scalar</span> field</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <a href=http://basilisk.fr/Basilisk%20C#iterators>foreach</a> <span class="op">()</span> <span class="op">{</span><span id=34></span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> i <span class="op">=</span> <span class="op">(</span>x <span class="op">-</span> ox<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=35></span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j <span class="op">=</span> <span class="op">(</span>y <span class="op">-</span> oy<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=36></span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> i <span class="op">&lt;</span> n <span class="op">&amp;&amp;</span> j <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> j <span class="op">&lt;</span> n<span class="op">){</span><span id=37></span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> v<span class="op">[</span>i<span class="op">][</span>j<span class="op">];</span><span id=38></span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=39></span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span><span class="op">{</span><span id=40></span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> <span class="dv">0</span><span class="er">.0</span><span class="op">;</span><span id=41></span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=42></span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=43></span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  matrix_free<span class="op">(</span>v<span class="op">);</span><span id=44></span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=45></span><span id=46></span></span></code></pre></div>
+<h2
+id="input_matrix_double-reads-and-store-the-matrix-from-a-double-precision-binary-file">input_matrix_double():
+reads and store the matrix from a double precision binary file</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <a href=auxiliar_input.h#input_matrix_double>input_matrix_double</a><span class="op">(</span><span class="dt">scalar</span> s<span class="op">,</span> <span class="dt">FILE</span> <span class="op">*</span> fp<span class="op">,</span> <span class="dt">int</span> n <span class="op">=</span> N<span class="op">,</span> <span class="dt">double</span> ox<span class="op">=</span>X0<span class="op">,</span> <span class="dt">double</span> oy<span class="op">=</span>Y0<span class="op">,</span> <span class="dt">double</span> width<span class="op">=</span>L0<span class="op">){</span><span id=50></span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span id=51></span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> nfile<span class="op">;</span><span id=52></span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  fread<span class="op">(&amp;</span>nfile<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>           <span class="co">// Read the matrix size from file<span id=53></span></span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  n <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>nfile<span class="op">;</span>                                 <span class="co">// Set matrix size<span id=54></span></span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span id=55></span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> yp<span class="op">[</span>n<span class="op">],</span> xp<span class="op">[</span>n<span class="op">];</span>                            <span class="co">// Arrays to store y and x coordinates<span id=56></span></span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">**</span>v <span class="op">=</span> matrix_new<span class="op">(</span>n<span class="op">,</span> n<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span>  <span class="co">// Allocate memory for matrix<span id=57></span></span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span id=58></span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  fread<span class="op">(&amp;</span>yp<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> n<span class="op">,</span> fp<span class="op">);</span>              <span class="co">// Read y coordinates from file<span id=59></span></span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++){</span><span id=60></span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    fread<span class="op">(&amp;</span>xp<span class="op">[</span>i<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>         <span class="co">// Read x coordinate for each row<span id=61></span></span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n<span class="op">;</span> j<span class="op">++){</span><span id=62></span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      fread<span class="op">(&amp;</span>v<span class="op">[</span>i<span class="op">][</span>j<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>     <span class="co">// Read matrix values<span id=63></span></span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=64></span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=65></span><span id=66></span></span></code></pre></div>
+<p>Loop over the domain and assign matrix values to the <span class="dt">scalar</span> field</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <a href=http://basilisk.fr/Basilisk%20C#iterators>foreach</a> <span class="op">()</span> <span class="op">{</span><span id=68></span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> i <span class="op">=</span> <span class="op">(</span>x <span class="op">-</span> ox<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=69></span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j <span class="op">=</span> <span class="op">(</span>y <span class="op">-</span> oy<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=70></span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> i <span class="op">&lt;</span> n <span class="op">&amp;&amp;</span> j <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> j <span class="op">&lt;</span> n<span class="op">){</span><span id=71></span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> v<span class="op">[</span>i<span class="op">][</span>j<span class="op">];</span><span id=72></span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=73></span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span><span class="op">{</span><span id=74></span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> <span class="dv">0</span><span class="er">.0</span><span class="op">;</span><span id=75></span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=76></span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=77></span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  matrix_free<span class="op">(</span>v<span class="op">);</span><span id=78></span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=79></span><span id=80></span></span></code></pre></div>
+<h2
+id="read_matrix-reads-and-store-the-matrix-from-a-double-precision-binary-file">read_matrix():
+reads and store the matrix from a double precision binary file</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> read_matrix<span class="op">(</span><span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>prefix<span class="op">,</span> <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>suffix<span class="op">,</span> <span class="dt">scalar</span> s<span class="op">)</span> <span class="op">{</span><span id=84></span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> filename<span class="op">[</span><span class="dv">256</span><span class="op">];</span><span id=85></span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  snprintf<span class="op">(</span>filename<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>filename<span class="op">),</span> <span class="st">&quot;</span><span class="sc">%s%s</span><span class="st">.bin&quot;</span><span class="op">,</span> prefix<span class="op">,</span> suffix<span class="op">);</span><span id=86></span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">FILE</span> <span class="op">*</span>fp <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/fopen.3.html>fopen</a><span class="op">(</span>filename<span class="op">,</span> <span class="st">&quot;r&quot;</span><span class="op">);</span><span id=87></span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(!</span>fp<span class="op">){</span><span id=88></span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/printf.3.html>printf</a><span class="op">(</span><span class="st">&quot;Binary file </span><span class="sc">%s</span><span class="st"> not found</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> filename<span class="op">);</span><span id=89></span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/exit.3.html>exit</a><span class="op">(</span>EXIT_FAILURE<span class="op">);</span><span id=90></span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=91></span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <a href=auxiliar_input.h#input_matrix_double>input_matrix_double</a><span class="op">(</span>s<span class="op">,</span> fp<span class="op">,</span> N<span class="op">,</span> X0<span class="op">,</span> Y0<span class="op">,</span> L0<span class="op">);</span><span id=92></span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/fclose.3.html>fclose</a><span class="op">(</span>fp<span class="op">);</span><span id=93></span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=94></span></span></code></pre></div>
+</div>
+<div id="footer">
+inspired by <a href="http://github.com/jgm/gitit/tree/master/">gitit</a>,
+powered by <a href="http://basilisk.fr/src/darcsit/README">darcsit</a>
+</div>
+          </div>
+        </div>
+        <div id="sidebar" class="yui-b first">
+<div id="logo">
+  <a href="http://basilisk.fr/" alt="site logo" title="Go to top page"><img src="http://basilisk.fr/img/logo.png" /></a>
+</div>
+          <div class="sitenav">
+  <fieldset>
+    <legend>Site</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/Front Page">Front page</a></li>
+      <li><a href="http://basilisk.fr/_index">All pages</a></li>
+      <li><a href="http://basilisk.fr/_activity">Recent activity</a></li>
+            <li><a href="http://basilisk.fr/Help">Help</a></li>
+    </ul>
+    <form action="/_search" method="get" id="searchform">
+      <input type="text" name="patterns" id="patterns"/>
+      <input type="submit" value="Search"/>
+    </form>
+  </fieldset>
+  <fieldset>
+    <legend>Documentation</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/Tutorial">Tutorial</a></li>
+      <li><a href="http://basilisk.fr/src/INSTALL">Installation</a></li>
+      <li><a href="http://basilisk.fr/Basilisk C">Basilisk C</a></li>
+      <li><a href="http://basilisk.fr/src/README">Solvers and functions</a></li>
+      <li><a href="http://basilisk.fr/src/examples/README">Examples</a></li>
+      <li><a href="http://groups.google.com/d/forum/basilisk-fr">User forum</a></li>
+      <li><a href="http://basilisk.fr/sandbox/documentation">More documentation</a></li>
+    </ul>
+  </fieldset>
+  <fieldset>
+    <legend>Development</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/src/?history">Recent activity</a></li>
+      <li><a href="http://basilisk.fr/src/">Source code</a></li>
+      <li><a href="https://hub.darcs.net/basilisk/basilisk/browse/src">Darcs Hub</a></li>
+      <li><a href="http://basilisk.fr/src/test/README">Test cases</a></li>
+      <li><a href="http://basilisk.fr/sandbox/bugs/README">Bug reports</a></li>
+      <li><a href="http://basilisk.fr/src/Contributing">How to contribute</a></li>
+      <li><a href="http://basilisk.fr/sandbox/">Play in the sandbox</a></li>
+    </ul>
+  </fieldset>
+</div>
+                    <div class="pageTools">
+  <fieldset>
+    <legend>This page</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/auxiliar_input.h?raw">Raw page source</a></li>
+      <li><a href="http://basilisk.fr/auxiliar_input.h?delete">Delete this page</a></li>
+    </ul>
+  </fieldset>
+</div>
+                            </div>
+    </div>
+    
+      </body>
+</html>
