@@ -136,7 +136,7 @@ void init_2D_complex(double *data, int n0, int n1, double kmin, double kmax, dou
     }
   }
 
-  fprintf(stdout, "real eta0 is %g \n", eta0);
+  fprintf(stdout, "real eta0 is %g \n", sqrt(eta0));
 
   free(kx);
   free(ky);
