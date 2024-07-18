@@ -31,7 +31,4 @@ int main()
   view(camera="iso");
   draw_vof ("f", color="z");
   save("test3.png");
-
-  squares("f", linear = false);
-  save("test4.png");
 }

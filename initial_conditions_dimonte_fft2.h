@@ -100,9 +100,10 @@ void save_data_for_gnuplot_real(double *data, int NX, const char *filename){
 ### init_2D_complex(): initializes the perturbation in Fourier space
 */
 
-void init_2D_complex(double *data, int n0, int n1, double kmin, double kmax){
+void init_2D_complex(double *data, int n0, int n1, double kmin, double kmax, double eta0_target=1){
   double *kx = malloc(n0 * sizeof(double));
   double *ky = malloc(n1 * sizeof(double));
+  double cst = eta0_target / sqrt((2*pi*log(kmax/kmin)));
 
   /** Calculate horizontal wavenumbers*/  
   for (int i = 0; i <= n0 / 2; ++i)
@@ -118,18 +119,25 @@ void init_2D_complex(double *data, int n0, int n1, double kmin, double kmax){
     ky[i] = 2 * pi * (i - n1) / L0;
 
   /** Initialize spectrum in the annular region with magnitude $cst/k$ and random phase */ 
+  double dkx = kx[1]-kx[0];
+  double dky = ky[1]-ky[0];
+  double eta0 = 0.;
   memset(data, 0, 2 * n0 * n1 * sizeof(double));
   for (int i = 0; i < n0; ++i){
     for (int j = 0; j < n1; ++j){
       double k = sqrt(sq(kx[i]) + sq(ky[j]));
       if ((k >= kmin) && (k < kmax)){
-        double magnitude = 1.0 / k;
+        double magnitude = cst / k;
         double phase = noise() * pi;
         REAL(data, i*n1+j) = magnitude * cos(phase);
         IMAG(data, i*n1+j) = magnitude * sin(phase);
+        eta0 += sq(magnitude)*dkx*dky;
       }
     }
   }
+
+  fprintf(stdout, "real eta0 is %g \n", eta0);
+
   free(kx);
   free(ky);
 }
@@ -172,19 +180,20 @@ void initial_condition_dimonte_fft2(scalar f, double amplitude=1, int NX=N, int 
   double *ydata = (double *)malloc(NY * sizeof(double));
   double *zdata = (double *)malloc(NX * NY * sizeof(double));
 
-  double L0_over_NX = L0 / (NX - 2);
+  double dx = L0 / (NX - 2);
   for (int i = 0; i < NX; i++){
-    xdata[i] = i * L0_over_NX + X0;
+    xdata[i] = i * dx + X0;
   }
 
-  for (int j = 0; j < NX; j++){    
-    ydata[j] = j * L0_over_NX + Y0;
+  double dy = L0 / (NY - 2);
+  for (int j = 0; j < NY; j++){    
+    ydata[j] = j * dy + Y0;
   }
 
   /** The perturbation is generated only by the main process */
   if (pid() == 0){
     // Initialize the spectrum
-    init_2D_complex(data, NX, NX, kmin, kmax);
+    init_2D_complex(data, NX, NY, kmin, kmax, eta0_target=amplitude);
     save_data_for_gnuplot_complex(data, NX, "initial_spectra.dat");
 
     // Perform the FFT2D 
@@ -193,7 +202,7 @@ void initial_condition_dimonte_fft2(scalar f, double amplitude=1, int NX=N, int 
 
     // Save the results into a 2D array
     for (int i = 0; i < NX; i++){
-      for (int j = 0; j < NX; j++){
+      for (int j = 0; j < NY; j++){
         int index = i * NX + j;
         zdata[index] = data[2 * index];
       }
@@ -203,17 +212,17 @@ void initial_condition_dimonte_fft2(scalar f, double amplitude=1, int NX=N, int 
 
   /** and broadcasted to the other processes if MPI */
   @ if _MPI
-    MPI_Bcast(zdata, NX * NX, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(zdata, NX * NY, MPI_DOUBLE, 0, MPI_COMM_WORLD);
   @endif
 
   /** Now, we'll interpolate the perturbation into the mesh. First, we set up
   the accelerations */
-  gsl_interp2d *interp = gsl_interp2d_alloc(gsl_interp2d_bilinear, NX, NX);
+  gsl_interp2d *interp = gsl_interp2d_alloc(gsl_interp2d_bilinear, NX, NY);
   gsl_interp_accel *x_acc = gsl_interp_accel_alloc();
   gsl_interp_accel *y_acc = gsl_interp_accel_alloc();
 
   /** Initialize the interpolation object */ 
-  gsl_interp2d_init(interp, xdata, ydata, zdata, NX, NX);
+  gsl_interp2d_init(interp, xdata, ydata, zdata, NX, NY);
 
   /** Apply initial condition to the scalar field. Here, we take care to
   normalize the perturbation using the standard deviation and multiply it by
@@ -223,21 +232,12 @@ void initial_condition_dimonte_fft2(scalar f, double amplitude=1, int NX=N, int 
   if (isvof) {
     vertex scalar phi[];
     foreach_vertex()
-      phi[] = gsl_interp2d_eval(interp, xdata, ydata, zdata, x, y, x_acc, y_acc);
-
-    stats s = statsf (phi);
-    foreach_vertex(){
-      phi[] = phi[]*amplitude/s.stddev - z;
-    }
+      phi[] = gsl_interp2d_eval(interp, xdata, ydata, zdata, x, y, x_acc, y_acc) - z;
     fractions (phi, f);	
   }
   else {
     foreach(){
       f[] = gsl_interp2d_eval(interp, xdata, ydata, zdata, x, y, x_acc, y_acc);
-    }
-    stats s = statsf (f);
-    foreach(){
-      f[] *= amplitude/s.stddev;
     }
   }  
 
