@@ -172,7 +172,7 @@ void fft2D(double *data, int n0, int n1){
 /** 
 ### initial_condition_dimonte_fft2(): initializes a scalar field f 
 */
-void initial_condition_dimonte_fft2(scalar f, double amplitude=1, int NX=N, int NY=N, double kmin=1, double kmax=1, bool isvof=0){
+void initial_condition_dimonte_fft2(vertex scalar phi, double amplitude=1, int NX=N, int NY=N, double kmin=1, double kmax=1, bool isvof=0){
   
   /** We declare the arrays and initialize the physical space*/
   double *data = malloc(2 * NX * NY * sizeof(double));
@@ -230,14 +230,12 @@ void initial_condition_dimonte_fft2(scalar f, double amplitude=1, int NX=N, int 
   field or use it to generate a VOF surface (`isvof=1`)
   */
   if (isvof) {
-    vertex scalar phi[];
     foreach_vertex()
       phi[] = gsl_interp2d_eval(interp, xdata, ydata, zdata, x, y, x_acc, y_acc) - z;
-    fractions (phi, f);	
   }
   else {
     foreach(){
-      f[] = gsl_interp2d_eval(interp, xdata, ydata, zdata, x, y, x_acc, y_acc);
+      phi[] = gsl_interp2d_eval(interp, xdata, ydata, zdata, x, y, x_acc, y_acc);
     }
   }  
 

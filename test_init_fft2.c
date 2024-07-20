@@ -10,11 +10,15 @@ int main()
   init_grid(N);
 
 #if TREE
-  refine(((r2 < sq(0.25)) && (r2 > sq(0.1))) && level < 9);
+  refine(((r2 < sq(1.50)) && (r2 > sq(0.5))) && level < 9);
 #endif
 
   scalar f[];
-  initial_condition_dimonte_fft2(f, 1, kmin = 25, kmax = 75, isvof=1);
+  {
+    vertex scalar phi[];
+    initial_condition_dimonte_fft2(phi, 1, kmin = 25, kmax = 75, isvof=1);
+    fractions(phi, f);
+  }
 
   stats s = statsf (f);
   fprintf (stderr, "# %f %.12f %g %g %g %g\n", t, s.sum, s.min, s.max, s.stddev, s.volume);

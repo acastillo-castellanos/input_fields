@@ -15,7 +15,12 @@ int main()
 #endif
 
   scalar f[];
-  initial_condition_dimonte_fft2(f, amplitude=0.01, NX=512, NY=512, kmin = 10, kmax = 50, isvof=1);
+  {
+    vertex scalar phi[];
+    initial_condition_dimonte_fft2(phi, amplitude=0.01, NX=512, NY=512, kmin = 10, kmax = 50, isvof=1);
+    fractions(phi, f);
+  }
+
 
   stats s = statsf (f);
   fprintf (stderr, "# %f %.12f %g %g %g %g\n", t, s.sum, s.min, s.max, s.stddev, s.volume);
