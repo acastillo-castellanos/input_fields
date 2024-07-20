@@ -86,7 +86,7 @@ void init_1D_complex(double *data, int N, double kmin, double kmax, double eta0_
 /** 
 ### initial_condition_dimonte_fft(): initializes a scalar field f 
 */
-void initial_condition_dimonte_fft(scalar f, double amplitude=1, int NX=N, double kmin=1, double kmax=1){
+void initial_condition_dimonte_fft(vertex scalar phi, double amplitude=1, int NX=N, double kmin=1, double kmax=1){
   
   /** We declare the arrays and initialize the physical space*/
   double *data = malloc(2 * NX * sizeof(double));
@@ -134,10 +134,10 @@ void initial_condition_dimonte_fft(scalar f, double amplitude=1, int NX=N, doubl
   field or use it to generate a VOF surface (`isvof=1`)
   */
 
-  vertex scalar phi[];
+  
   foreach_vertex()
     phi[] = gsl_interp_eval(interp, xdata, ydata, x, acc) - y;
-  fractions(phi, f);
+  
 
   /** Release interpolation objects */ 
   gsl_interp_free(interp);

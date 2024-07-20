@@ -14,7 +14,11 @@ int main()
 #endif
 
   scalar f[];
-  initial_condition_dimonte_fft(f, 0.01, kmin = 25, kmax = 75);
+  {
+    vertex scalar phi[];
+    initial_condition_dimonte_fft(phi, 0.01, kmin = 25, kmax = 75);
+    fractions(phi, f);
+  }
 
   stats s = statsf (f);
   fprintf (stderr, "# %f %.12f %g %g %g %g\n", t, s.sum, s.min, s.max, s.stddev, s.volume);
