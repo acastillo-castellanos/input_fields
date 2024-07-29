@@ -1,0 +1,391 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title> - initial_conditions_dimonte_fft2.h</title>
+        <link href="http://basilisk.fr/css/custom.css" rel="stylesheet" media="screen, projection" type="text/css" />
+    <link href="http://basilisk.fr/css/print.css" rel="stylesheet" media="print" type= "text/css" />
+        <!--[if IE]><link href="http://basilisk.fr/css/ie.css" rel="stylesheet" media="screen, projection" type="text/css" /><![endif]-->
+    <link rel="stylesheet" href="http://basilisk.fr/css/basilisk.css"/>
+    <script src="http://basilisk.fr/js/jquery.min.js" type="text/javascript"></script>
+    <script src="http://basilisk.fr/js/jquery-ui.packed.js" type="text/javascript"></script>
+    <script src="http://basilisk.fr/js/plots.js" type="text/javascript"></script>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css"
+      integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j"
+      crossorigin="anonymous"/>
+<script defer
+	src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"
+	integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ"
+	crossorigin="anonymous">
+</script>
+  </head>
+  <body>
+    <div id="doc3" class="yui-t1">
+        <div id="yui-main">
+          <div id="maincol" class="yui-b">
+<div id="userbox">
+  <noscript>
+    <a href="http://basilisk.fr/_login">Login</a>
+    <a href="http://basilisk.fr/_logout">Logout</a>
+  </noscript>
+  &nbsp;
+  <a id="loginlink" class="login" href="http://basilisk.fr/_login">Login / Get an account</a>
+  <a id="logoutlink" class="login" href="http://basilisk.fr/_logout">Logout <span id="logged_in_user"></span></a>
+</div>
+<ul class="tabs">
+  <li class=selected><a href="http://basilisk.fr/initial_conditions_dimonte_fft2.h">view</a></li><li><a href="http://basilisk.fr/initial_conditions_dimonte_fft2.h?history">history</a></li>
+</ul>
+<div id="content">
+        <h1 class="pageTitle"><a href="http://basilisk.fr/initial_conditions_dimonte_fft2.h">initial_conditions_dimonte_fft2.h</a></h1>
+  <ul class="messages" id="messages"></ul>
+  <div id="status"></div>
+    <div id="TOC">
+<ul>
+<li><a href="#initializing-an-interface-using-a-given-spectrum"
+id="toc-initializing-an-interface-using-a-given-spectrum">Initializing
+an interface using a given spectrum</a>
+<ul>
+<li><a
+href="#save-the-initial-perturbation-in-a-gnuplot-compatible-format"
+id="toc-save-the-initial-perturbation-in-a-gnuplot-compatible-format">Save
+the initial perturbation in a gnuplot-compatible format</a>
+<ul>
+<li><a
+href="#save_data_for_gnuplot_complex-saves-a-complex-2d-array-as-a-.dat-file"
+id="toc-save_data_for_gnuplot_complex-saves-a-complex-2d-array-as-a-.dat-file">save_data_for_gnuplot_complex():
+saves a (complex) 2D array as a .dat file</a></li>
+<li><a
+href="#save_data_for_gnuplot_real-saves-a-2d-array-as-a-.dat-file"
+id="toc-save_data_for_gnuplot_real-saves-a-2d-array-as-a-.dat-file">save_data_for_gnuplot_real():
+saves a 2D array as a .dat file</a></li>
+<li><a
+href="#init_2d_complex-initializes-the-perturbation-in-fourier-space"
+id="toc-init_2d_complex-initializes-the-perturbation-in-fourier-space">init_2D_complex():
+initializes the perturbation in Fourier space</a></li>
+<li><a
+href="#fft2d-uses-the-radix-2-routines-to-return-to-physical-space"
+id="toc-fft2d-uses-the-radix-2-routines-to-return-to-physical-space">fft2D():
+uses the radix-2 routines to return to physical space</a></li>
+<li><a
+href="#initial_condition_dimonte_fft2-initializes-a-scalar-field-f"
+id="toc-initial_condition_dimonte_fft2-initializes-a-scalar-field-f">initial_condition_dimonte_fft2():
+initializes a <span class="dt">scalar</span> field f</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="initializing-an-interface-using-a-given-spectrum">Initializing
+an interface using a given spectrum</h1>
+<center>
+<figure>
+<img src="Thevenin.png"
+alt="Initial perturbation of the interface with: (Left) the Fourier power spectrum of the perturbation amplitude, (Middle) the phase of the Fourier modes (middle) and (Right) the perturbation amplitude in the physical space. Taken from Thévenin et al (2024)" />
+<figcaption aria-hidden="true">Initial perturbation of the interface
+with: (Left) the Fourier power spectrum of the perturbation amplitude,
+(Middle) the phase of the Fourier modes (middle) and (Right) the
+perturbation amplitude in the physical space. Taken from <a
+href="https://arxiv.org/pdf/2403.17832">Thévenin et al
+(2024)</a></figcaption>
+</figure>
+</center>
+<center>
+<img src="Thevenin2.png" alt="drawing" width="400"/>
+<img src="Thevenin3.png" alt="drawing" width="400"/>
+<figcaption>
+An example of the initialized interface using <code>isvof=0</code>
+(left) and <code>isvof=1</code> (right).
+</figcaption>
+</center>
+<p><br/><br/></p>
+<p>Consider <span class="math inline">\eta(x, y)</span> being a zero
+mean, periodic initial perturbation at the interface between two fluids.
+This perturbation is further characterized by the horizontal discrete
+Fourier modes <span class="math inline">\hat{\eta}</span> of wavevector
+<span class="math inline">\vec{k} = (k_x, k_y)^T \in \mathbb{Z}^2</span>
+and modulus <span class="math inline">k = \vert\vert k \vert\vert</span>
+such that <span class="math display">
+\eta(x,y) = \sum \hat{\eta}(\vec{k}) e^{i(k_x x + k_y y)}
+</span> The realizability condition, <span class="math inline">\eta \in
+\mathbb{R}</span>, imposes that for the complex Fourier modes <span
+class="math inline">\hat{\eta}(-\vec{k}) =
+\hat{\eta}^*(\vec{k})</span>.</p>
+<p>We further consider an annular spectrum for the interface
+perturbation as in <a href="https://doi.org/10.1063/1.1688328">Dimonte
+et al. (2004)</a> of the form <span class="math display">
+\hat{\eta}(\vec{k}) = e^{i\phi(\vec{k})} \times
+\begin{cases}
+cst/k &amp; \text{ for } \vert\vert k - k_0 \vert\vert \leq \Delta
+k/2  \\
+0 &amp; \text{otherwise}
+\end{cases}
+</span> with</p>
+<ul>
+<li><span class="math inline">k_0</span> being the mean wavenumber</li>
+<li><span class="math inline">\Delta k</span> the bandwidth of the
+perturbation</li>
+<li><span class="math inline">\phi</span> the phase of the modes (here
+is randomly sampled)</li>
+<li><span class="math inline">\eta_0</span> the rms amplitude</li>
+</ul>
+<p>To initialize the interface we’ll use a Fourier transform and some
+interpolation routines from GSL.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gsl/gsl_fft_complex.h&gt;</span><span class="pp"><span id=47></span></span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gsl/gsl_complex.h&gt;</span><span class="pp"><span id=48></span></span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gsl/gsl_complex_math.h&gt;</span><span class="pp"><span id=49></span></span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gsl/gsl_interp2d.h&gt;</span><span class="pp"><span id=50></span></span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gsl/gsl_spline2d.h&gt;</span><span class="pp"><span id=51></span></span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#pragma autolink -lgsl -lgslcblas<span id=52></span></span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="pp">#define REAL</span><span class="op">(</span><span class="pp">z</span><span class="op">,</span><span class="pp">i</span><span class="op">)</span><span class="pp"> </span><span class="op">((</span><span class="pp">z</span><span class="op">)[</span><span class="dv">2</span><span class="op">*(</span><span class="pp">i</span><span class="op">)])</span><span class="pp"><span id=53></span></span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="pp">#define IMAG</span><span class="op">(</span><span class="pp">z</span><span class="op">,</span><span class="pp">i</span><span class="op">)</span><span class="pp"> </span><span class="op">((</span><span class="pp">z</span><span class="op">)[</span><span class="dv">2</span><span class="op">*(</span><span class="pp">i</span><span class="op">)+</span><span class="dv">1</span><span class="op">])</span><span class="pp"><span id=54></span><span id=55></span></span></span></code></pre></div>
+<h2
+id="save-the-initial-perturbation-in-a-gnuplot-compatible-format">Save
+the initial perturbation in a gnuplot-compatible format</h2>
+<h3
+id="save_data_for_gnuplot_complex-saves-a-complex-2d-array-as-a-.dat-file">save_data_for_gnuplot_complex():
+saves a (complex) 2D array as a .dat file</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <a href=initial_conditions_dimonte_fft2.h#save_data_for_gnuplot_complex>save_data_for_gnuplot_complex</a><span class="op">(</span><span class="dt">double</span> <span class="op">*</span>data<span class="op">,</span> <span class="dt">int</span> NX<span class="op">,</span> <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>filename<span class="op">){</span><span id=61></span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">FILE</span> <span class="op">*</span>file <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/fopen.3.html>fopen</a><span class="op">(</span>filename<span class="op">,</span> <span class="st">&quot;w&quot;</span><span class="op">);</span><span id=62></span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>file <span class="op">==</span> NULL<span class="op">){</span><span id=63></span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/fprintf.3.html>fprintf</a><span class="op">(</span><a href=http://man7.org/linux/man-pages/man3/stderr.3.html>stderr</a><span class="op">,</span> <span class="st">&quot;Error opening file </span><span class="sc">%s\n</span><span class="st">&quot;</span><span class="op">,</span> filename<span class="op">);</span><span id=64></span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span><span id=65></span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=66></span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span id=67></span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> NX<span class="op">;</span> i<span class="op">++){</span><span id=68></span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> NX<span class="op">;</span> j<span class="op">++){</span><span id=69></span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">int</span> index <span class="op">=</span> i <span class="op">*</span> NX <span class="op">+</span> j<span class="op">;</span><span id=70></span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">double</span> magnitude <span class="op">=</span> sqrt<span class="op">(</span>sq<span class="op">(</span>REAL<span class="op">(</span>data<span class="op">,</span> index<span class="op">))</span> <span class="op">+</span> sq<span class="op">(</span>IMAG<span class="op">(</span>data<span class="op">,</span> index<span class="op">)));</span><span id=71></span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <a href=http://man7.org/linux/man-pages/man3/fprintf.3.html>fprintf</a><span class="op">(</span>file<span class="op">,</span> <span class="st">&quot;</span><span class="sc">%d</span><span class="st"> </span><span class="sc">%d</span><span class="st"> </span><span class="sc">%f</span><span class="st"> </span><span class="sc">%f</span><span class="st"> </span><span class="sc">%f\n</span><span class="st">&quot;</span><span class="op">,</span> i<span class="op">,</span> j<span class="op">,</span> REAL<span class="op">(</span>data<span class="op">,</span>index<span class="op">),</span> IMAG<span class="op">(</span>data<span class="op">,</span>index<span class="op">),</span> magnitude<span class="op">);</span><span id=72></span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=73></span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/fprintf.3.html>fprintf</a><span class="op">(</span>file<span class="op">,</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span id=74></span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=75></span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/fclose.3.html>fclose</a><span class="op">(</span>file<span class="op">);</span><span id=76></span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=77></span><span id=78></span></span></code></pre></div>
+<h3
+id="save_data_for_gnuplot_real-saves-a-2d-array-as-a-.dat-file">save_data_for_gnuplot_real():
+saves a 2D array as a .dat file</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <a href=initial_conditions_dimonte_fft2.h#save_data_for_gnuplot_real>save_data_for_gnuplot_real</a><span class="op">(</span><span class="dt">double</span> <span class="op">*</span>data<span class="op">,</span> <span class="dt">int</span> NX<span class="op">,</span> <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>filename<span class="op">){</span><span id=82></span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">FILE</span> <span class="op">*</span>file <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/fopen.3.html>fopen</a><span class="op">(</span>filename<span class="op">,</span> <span class="st">&quot;w&quot;</span><span class="op">);</span><span id=83></span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>file <span class="op">==</span> NULL<span class="op">){</span><span id=84></span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/fprintf.3.html>fprintf</a><span class="op">(</span><a href=http://man7.org/linux/man-pages/man3/stderr.3.html>stderr</a><span class="op">,</span> <span class="st">&quot;Error opening file </span><span class="sc">%s\n</span><span class="st">&quot;</span><span class="op">,</span> filename<span class="op">);</span><span id=85></span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span><span id=86></span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=87></span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span id=88></span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> NX<span class="op">;</span> i<span class="op">++){</span><span id=89></span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> NX<span class="op">;</span> j<span class="op">++){</span><span id=90></span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">int</span> index <span class="op">=</span> i <span class="op">*</span> NX <span class="op">+</span> j<span class="op">;</span><span id=91></span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <a href=http://man7.org/linux/man-pages/man3/fprintf.3.html>fprintf</a><span class="op">(</span>file<span class="op">,</span> <span class="st">&quot;</span><span class="sc">%d</span><span class="st"> </span><span class="sc">%d</span><span class="st"> </span><span class="sc">%f</span><span class="st"> </span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> i<span class="op">,</span> j<span class="op">,</span> data<span class="op">[</span>index<span class="op">]);</span><span id=92></span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=93></span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/fprintf.3.html>fprintf</a><span class="op">(</span>file<span class="op">,</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span> <span id=94></span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=95></span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/fclose.3.html>fclose</a><span class="op">(</span>file<span class="op">);</span><span id=96></span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=97></span><span id=98></span></span></code></pre></div>
+<h3
+id="init_2d_complex-initializes-the-perturbation-in-fourier-space">init_2D_complex():
+initializes the perturbation in Fourier space</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <a href=initial_conditions_dimonte_fft2.h#init_2D_complex>init_2D_complex</a><span class="op">(</span><span class="dt">double</span> <span class="op">*</span>data<span class="op">,</span> <span class="dt">int</span> n0<span class="op">,</span> <span class="dt">int</span> n1<span class="op">,</span> <span class="dt">double</span> kmin<span class="op">,</span> <span class="dt">double</span> kmax<span class="op">,</span> <span class="dt">double</span> eta0_target<span class="op">=</span><span class="dv">1</span><span class="op">){</span><span id=103></span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>kx <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n0 <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=104></span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>ky <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n1 <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=105></span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> cst <span class="op">=</span> eta0_target <span class="op">/</span> sqrt<span class="op">((</span><span class="dv">2</span><span class="op">*</span>pi<span class="op">*</span>log<span class="op">(</span>kmax<span class="op">/</span>kmin<span class="op">)));</span><span id=106></span><span id=107></span></span></code></pre></div>
+<p>Calculate horizontal wavenumbers</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;=</span> n0 <span class="op">/</span> <span class="dv">2</span><span class="op">;</span> <span class="op">++</span>i<span class="op">)</span><span id=109></span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    kx<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> pi <span class="op">*</span> i <span class="op">/</span> L0<span class="op">;</span><span id=110></span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span id=111></span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> n0 <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> n0<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span><span id=112></span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    kx<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> pi <span class="op">*</span> <span class="op">(</span>i <span class="op">-</span> n0<span class="op">)</span> <span class="op">/</span> L0<span class="op">;</span><span id=113></span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span id=114></span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;=</span> n1 <span class="op">/</span> <span class="dv">2</span><span class="op">;</span> <span class="op">++</span>i<span class="op">)</span><span id=115></span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    ky<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> pi <span class="op">*</span> i <span class="op">/</span> L0<span class="op">;</span><span id=116></span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span id=117></span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> n1 <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> n1<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span><span id=118></span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    ky<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> pi <span class="op">*</span> <span class="op">(</span>i <span class="op">-</span> n1<span class="op">)</span> <span class="op">/</span> L0<span class="op">;</span><span id=119></span><span id=120></span></span></code></pre></div>
+<p>Initialize spectrum in the annular region with magnitude <span
+class="math inline">cst/k</span> and random phase</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> dkx <span class="op">=</span> kx<span class="op">[</span><span class="dv">1</span><span class="op">]-</span>kx<span class="op">[</span><span class="dv">0</span><span class="op">];</span><span id=122></span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> dky <span class="op">=</span> ky<span class="op">[</span><span class="dv">1</span><span class="op">]-</span>ky<span class="op">[</span><span class="dv">0</span><span class="op">];</span><span id=123></span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> eta0 <span class="op">=</span> <span class="dv">0</span><span class="er">.</span><span class="op">;</span><span id=124></span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  memset<span class="op">(</span>data<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">2</span> <span class="op">*</span> n0 <span class="op">*</span> n1 <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=125></span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n0<span class="op">;</span> <span class="op">++</span>i<span class="op">){</span><span id=126></span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n1<span class="op">;</span> <span class="op">++</span>j<span class="op">){</span><span id=127></span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">double</span> k <span class="op">=</span> sqrt<span class="op">(</span>sq<span class="op">(</span>kx<span class="op">[</span>i<span class="op">])</span> <span class="op">+</span> sq<span class="op">(</span>ky<span class="op">[</span>j<span class="op">]));</span><span id=128></span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> <span class="op">((</span>k <span class="op">&gt;=</span> kmin<span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">(</span>k <span class="op">&lt;</span> kmax<span class="op">)){</span><span id=129></span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">double</span> magnitude <span class="op">=</span> cst <span class="op">/</span> k<span class="op">;</span><span id=130></span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">double</span> phase <span class="op">=</span> noise<span class="op">()</span> <span class="op">*</span> pi<span class="op">;</span><span id=131></span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        REAL<span class="op">(</span>data<span class="op">,</span> i<span class="op">*</span>n1<span class="op">+</span>j<span class="op">)</span> <span class="op">=</span> magnitude <span class="op">*</span> cos<span class="op">(</span>phase<span class="op">);</span><span id=132></span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        IMAG<span class="op">(</span>data<span class="op">,</span> i<span class="op">*</span>n1<span class="op">+</span>j<span class="op">)</span> <span class="op">=</span> magnitude <span class="op">*</span> sin<span class="op">(</span>phase<span class="op">);</span><span id=133></span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        eta0 <span class="op">+=</span> sq<span class="op">(</span>magnitude<span class="op">)*</span>dkx<span class="op">*</span>dky<span class="op">;</span><span id=134></span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span><span id=135></span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=136></span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=137></span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span id=138></span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/fprintf.3.html>fprintf</a><span class="op">(</span><a href=http://man7.org/linux/man-pages/man3/stdout.3.html>stdout</a><span class="op">,</span> <span class="st">&quot;real eta0 is </span><span class="sc">%g</span><span class="st"> </span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> sqrt<span class="op">(</span>eta0<span class="op">));</span><span id=139></span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span id=140></span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>kx<span class="op">);</span><span id=141></span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>ky<span class="op">);</span><span id=142></span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=143></span><span id=144></span></span></code></pre></div>
+<h3
+id="fft2d-uses-the-radix-2-routines-to-return-to-physical-space">fft2D():
+uses the radix-2 routines to return to physical space</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <a href=initial_conditions_dimonte_fft2.h#fft2D>fft2D</a><span class="op">(</span><span class="dt">double</span> <span class="op">*</span>data<span class="op">,</span> <span class="dt">int</span> n0<span class="op">,</span> <span class="dt">int</span> n1<span class="op">){</span>  <span id=148></span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span id=149></span>  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">// FFT along rows <span id=150></span></span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n0<span class="op">;</span> <span class="op">++</span>i<span class="op">){</span><span id=151></span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    gsl_fft_complex_radix2_forward<span class="op">(</span>data <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> i <span class="op">*</span> n1<span class="op">,</span> <span class="dv">1</span><span class="op">,</span> n1<span class="op">);</span><span id=152></span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=153></span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span id=154></span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// FFT along columns<span id=155></span></span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>column <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span><span class="dv">2</span> <span class="op">*</span> n0 <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=156></span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n1<span class="op">;</span> <span class="op">++</span>j<span class="op">){</span><span id=157></span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n0<span class="op">;</span> <span class="op">++</span>i<span class="op">){</span><span id=158></span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      REAL<span class="op">(</span>column<span class="op">,</span>i<span class="op">)</span> <span class="op">=</span> REAL<span class="op">(</span>data<span class="op">,</span> i<span class="op">*</span>n1 <span class="op">+</span> j<span class="op">);</span><span id=159></span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>      IMAG<span class="op">(</span>column<span class="op">,</span>i<span class="op">)</span> <span class="op">=</span> IMAG<span class="op">(</span>data<span class="op">,</span> i<span class="op">*</span>n1 <span class="op">+</span> j<span class="op">);</span><span id=160></span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=161></span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    gsl_fft_complex_radix2_forward<span class="op">(</span>column<span class="op">,</span> <span class="dv">1</span><span class="op">,</span> n0<span class="op">);</span><span id=162></span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n0<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span><span id=163></span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span><span id=164></span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>      REAL<span class="op">(</span>data<span class="op">,</span> i<span class="op">*</span>n1 <span class="op">+</span> j<span class="op">)</span> <span class="op">=</span> REAL<span class="op">(</span>column<span class="op">,</span>i<span class="op">);</span><span id=165></span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>      IMAG<span class="op">(</span>data<span class="op">,</span> i<span class="op">*</span>n1 <span class="op">+</span> j<span class="op">)</span> <span class="op">=</span> IMAG<span class="op">(</span>column<span class="op">,</span>i<span class="op">);</span><span id=166></span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=167></span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=168></span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>column<span class="op">);</span><span id=169></span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=170></span><span id=171></span></span></code></pre></div>
+<h3
+id="initial_condition_dimonte_fft2-initializes-a-scalar-field-f">initial_condition_dimonte_fft2():
+initializes a <span class="dt">scalar</span> field f</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> initial_condition_dimonte_fft2<span class="op">(</span><span class="dt">scalar</span> f<span class="op">,</span> <span class="dt">double</span> amplitude<span class="op">=</span><span class="dv">1</span><span class="op">,</span> <span class="dt">int</span> NX<span class="op">=</span>N<span class="op">,</span> <span class="dt">int</span> NY<span class="op">=</span>N<span class="op">,</span> <span class="dt">double</span> kmin<span class="op">=</span><span class="dv">1</span><span class="op">,</span> <span class="dt">double</span> kmax<span class="op">=</span><span class="dv">1</span><span class="op">,</span> <span class="dt">bool</span> isvof<span class="op">=</span><span class="dv">0</span><span class="op">){</span><span id=175></span><span id=176></span></span></code></pre></div>
+<p>We declare the arrays and initialize the physical space</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>data <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span><span class="dv">2</span> <span class="op">*</span> NX <span class="op">*</span> NY <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=178></span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>xdata <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>NX <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=179></span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>ydata <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>NY <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=180></span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>zdata <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>NX <span class="op">*</span> NY <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=181></span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span id=182></span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> dx <span class="op">=</span> L0 <span class="op">/</span> <span class="op">(</span>NX <span class="op">-</span> <span class="dv">2</span><span class="op">);</span><span id=183></span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> NX<span class="op">;</span> i<span class="op">++){</span><span id=184></span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    xdata<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> i <span class="op">*</span> dx <span class="op">+</span> X0<span class="op">;</span><span id=185></span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=186></span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span id=187></span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> dy <span class="op">=</span> L0 <span class="op">/</span> <span class="op">(</span>NY <span class="op">-</span> <span class="dv">2</span><span class="op">);</span><span id=188></span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> NY<span class="op">;</span> j<span class="op">++){</span>    <span id=189></span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    ydata<span class="op">[</span>j<span class="op">]</span> <span class="op">=</span> j <span class="op">*</span> dy <span class="op">+</span> Y0<span class="op">;</span><span id=190></span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=191></span><span id=192></span></span></code></pre></div>
+<p>The perturbation is generated only by the main process</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>pid<span class="op">()</span> <span class="op">==</span> <span class="dv">0</span><span class="op">){</span><span id=194></span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Initialize the spectrum<span id=195></span></span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <a href=initial_conditions_dimonte_fft2.h#init_2D_complex>init_2D_complex</a><span class="op">(</span>data<span class="op">,</span> NX<span class="op">,</span> NY<span class="op">,</span> kmin<span class="op">,</span> kmax<span class="op">,</span> eta0_target<span class="op">=</span>amplitude<span class="op">);</span><span id=196></span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <a href=initial_conditions_dimonte_fft2.h#save_data_for_gnuplot_complex>save_data_for_gnuplot_complex</a><span class="op">(</span>data<span class="op">,</span> NX<span class="op">,</span> <span class="st">&quot;initial_spectra.dat&quot;</span><span class="op">);</span><span id=197></span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span id=198></span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Perform the FFT2D <span id=199></span></span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <a href=initial_conditions_dimonte_fft2.h#fft2D>fft2D</a><span class="op">(</span>data<span class="op">,</span> NX<span class="op">,</span> NX<span class="op">);</span><span id=200></span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <a href=initial_conditions_dimonte_fft2.h#save_data_for_gnuplot_complex>save_data_for_gnuplot_complex</a><span class="op">(</span>data<span class="op">,</span> NX<span class="op">,</span> <span class="st">&quot;final_deformation.dat&quot;</span><span class="op">);</span><span id=201></span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span id=202></span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Save the results into a 2D array<span id=203></span></span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> NX<span class="op">;</span> i<span class="op">++){</span><span id=204></span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> NY<span class="op">;</span> j<span class="op">++){</span><span id=205></span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> index <span class="op">=</span> i <span class="op">*</span> NX <span class="op">+</span> j<span class="op">;</span><span id=206></span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        zdata<span class="op">[</span>index<span class="op">]</span> <span class="op">=</span> data<span class="op">[</span><span class="dv">2</span> <span class="op">*</span> index<span class="op">];</span><span id=207></span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span><span id=208></span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=209></span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <a href=initial_conditions_dimonte_fft2.h#save_data_for_gnuplot_real>save_data_for_gnuplot_real</a><span class="op">(</span>zdata<span class="op">,</span> NX<span class="op">,</span> <span class="st">&quot;final_deformation2.dat&quot;</span><span class="op">);</span><span id=210></span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=211></span><span id=212></span></span></code></pre></div>
+<p>and broadcasted to the other processes if MPI</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>  @ <span class="cf">if</span> _MPI<span id=214></span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    MPI_Bcast<span class="op">(</span>zdata<span class="op">,</span> NX <span class="op">*</span> NY<span class="op">,</span> MPI_DOUBLE<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> MPI_COMM_WORLD<span class="op">);</span><span id=215></span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  @endif<span id=216></span><span id=217></span></span></code></pre></div>
+<p>Now, we’ll interpolate the perturbation into the mesh. First, we set
+up the accelerations</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>  gsl_interp2d <span class="op">*</span>interp <span class="op">=</span> gsl_interp2d_alloc<span class="op">(</span>gsl_interp2d_bilinear<span class="op">,</span> NX<span class="op">,</span> NY<span class="op">);</span><span id=220></span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  gsl_interp_accel <span class="op">*</span>x_acc <span class="op">=</span> gsl_interp_accel_alloc<span class="op">();</span><span id=221></span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  gsl_interp_accel <span class="op">*</span>y_acc <span class="op">=</span> gsl_interp_accel_alloc<span class="op">();</span><span id=222></span><span id=223></span></span></code></pre></div>
+<p>Initialize the interpolation object</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>  gsl_interp2d_init<span class="op">(</span>interp<span class="op">,</span> xdata<span class="op">,</span> ydata<span class="op">,</span> zdata<span class="op">,</span> NX<span class="op">,</span> NY<span class="op">);</span><span id=225></span><span id=226></span></span></code></pre></div>
+<p>Apply initial condition to the <span class="dt">scalar</span> field. Here, we take care to
+normalize the perturbation using the standard deviation and multiply it
+by some amplitude. Also, we may apply the perturbation directly
+(<code>isvof=0</code>) to a field or use it to generate a VOF surface
+(<code>isvof=1</code>)</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>isvof<span class="op">)</span> <span class="op">{</span><span id=232></span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <a href=http://basilisk.fr/Basilisk%20C#face-and-vertex-fields>vertex</a> <span class="dt">scalar</span> phi<span class="op">[];</span><span id=233></span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <a href=http://basilisk.fr/Basilisk%20C#foreach_vertex>foreach_vertex</a><span class="op">()</span><span id=234></span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>      phi<span class="op">[]</span> <span class="op">=</span> gsl_interp2d_eval<span class="op">(</span>interp<span class="op">,</span> xdata<span class="op">,</span> ydata<span class="op">,</span> zdata<span class="op">,</span> x<span class="op">,</span> y<span class="op">,</span> x_acc<span class="op">,</span> y_acc<span class="op">)</span> <span class="op">-</span> z<span class="op">;</span><span id=235></span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    fractions <span class="op">(</span>phi<span class="op">,</span> f<span class="op">);</span>	<span id=236></span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=237></span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="op">{</span><span id=238></span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <a href=http://basilisk.fr/Basilisk%20C#iterators>foreach</a><span class="op">(){</span><span id=239></span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>      f<span class="op">[]</span> <span class="op">=</span> gsl_interp2d_eval<span class="op">(</span>interp<span class="op">,</span> xdata<span class="op">,</span> ydata<span class="op">,</span> zdata<span class="op">,</span> x<span class="op">,</span> y<span class="op">,</span> x_acc<span class="op">,</span> y_acc<span class="op">);</span><span id=240></span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=241></span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=242></span><span id=243></span></span></code></pre></div>
+<p>Release interpolation objects</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>  gsl_interp2d_free<span class="op">(</span>interp<span class="op">);</span><span id=245></span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  gsl_interp_accel_free<span class="op">(</span>x_acc<span class="op">);</span><span id=246></span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  gsl_interp_accel_free<span class="op">(</span>y_acc<span class="op">);</span><span id=247></span><span id=248></span></span></code></pre></div>
+<p>Free Dynamically Allocated Memory</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>xdata<span class="op">);</span><span id=250></span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>ydata<span class="op">);</span><span id=251></span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>zdata<span class="op">);</span><span id=252></span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>data<span class="op">);</span><span id=253></span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=254></span></span></code></pre></div>
+</div>
+<div id="footer">
+inspired by <a href="http://github.com/jgm/gitit/tree/master/">gitit</a>,
+powered by <a href="http://basilisk.fr/src/darcsit/README">darcsit</a>
+</div>
+          </div>
+        </div>
+        <div id="sidebar" class="yui-b first">
+<div id="logo">
+  <a href="http://basilisk.fr/" alt="site logo" title="Go to top page"><img src="http://basilisk.fr/img/logo.png" /></a>
+</div>
+          <div class="sitenav">
+  <fieldset>
+    <legend>Site</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/Front Page">Front page</a></li>
+      <li><a href="http://basilisk.fr/_index">All pages</a></li>
+      <li><a href="http://basilisk.fr/_activity">Recent activity</a></li>
+            <li><a href="http://basilisk.fr/Help">Help</a></li>
+    </ul>
+    <form action="/_search" method="get" id="searchform">
+      <input type="text" name="patterns" id="patterns"/>
+      <input type="submit" value="Search"/>
+    </form>
+  </fieldset>
+  <fieldset>
+    <legend>Documentation</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/Tutorial">Tutorial</a></li>
+      <li><a href="http://basilisk.fr/src/INSTALL">Installation</a></li>
+      <li><a href="http://basilisk.fr/Basilisk C">Basilisk C</a></li>
+      <li><a href="http://basilisk.fr/src/README">Solvers and functions</a></li>
+      <li><a href="http://basilisk.fr/src/examples/README">Examples</a></li>
+      <li><a href="http://groups.google.com/d/forum/basilisk-fr">User forum</a></li>
+      <li><a href="http://basilisk.fr/sandbox/documentation">More documentation</a></li>
+    </ul>
+  </fieldset>
+  <fieldset>
+    <legend>Development</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/src/?history">Recent activity</a></li>
+      <li><a href="http://basilisk.fr/src/">Source code</a></li>
+      <li><a href="https://hub.darcs.net/basilisk/basilisk/browse/src">Darcs Hub</a></li>
+      <li><a href="http://basilisk.fr/src/test/README">Test cases</a></li>
+      <li><a href="http://basilisk.fr/sandbox/bugs/README">Bug reports</a></li>
+      <li><a href="http://basilisk.fr/src/Contributing">How to contribute</a></li>
+      <li><a href="http://basilisk.fr/sandbox/">Play in the sandbox</a></li>
+    </ul>
+  </fieldset>
+</div>
+                    <div class="pageTools">
+  <fieldset>
+    <legend>This page</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/initial_conditions_dimonte_fft2.h?raw">Raw page source</a></li>
+      <li><a href="http://basilisk.fr/initial_conditions_dimonte_fft2.h?delete">Delete this page</a></li>
+    </ul>
+  </fieldset>
+</div>
+                            </div>
+    </div>
+    
+      </body>
+</html>
