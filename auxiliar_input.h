@@ -13,27 +13,30 @@ For example: using `input_matrix(T, fp, N, X0, Y0, L0)` will read a square
 matrix of size `N` from file descriptor `fp` into a scalar field `T`.
 
 ## input_matrix(): reads and store the matrix from the binary file */
-void input_matrix(scalar s, FILE * fp, int n = N, double ox=X0, double oy=Y0, double width=L0){
+void input_matrix(scalar s, FILE * fp, int n = N, double ox=X0, double oz=Z0, double width=L0){
 
   float nfile;
-  fread(&nfile, sizeof(float), 1, fp);          // Read the matrix size from file
-  n = (int)nfile;                               // Set matrix size
+  int read_size;
+  NOT_UNUSED(read_size);
 
-  float yp[n], xp[n];                           // Arrays to store y and x coordinates
-  float **v = matrix_new(n, n, sizeof(float));  // Allocate memory for matrix
+  read_size = fread(&nfile, sizeof(float), 1, fp);          // Read the matrix size from file
+  n = (int)nfile;                                           // Set matrix size
 
-  fread(&yp, sizeof(float), n, fp);             // Read y coordinates from file
+  float yp[n], xp[n];                                       // Arrays to store y and x coordinates
+  float **v = matrix_new(n, n, sizeof(float));              // Allocate memory for matrix
+
+  read_size = fread(&yp, sizeof(float), n, fp);             // Read y coordinates from file
   for (int i = 0; i < n; i++){
-    fread(&xp[i], sizeof(float), 1, fp);        // Read x coordinate for each row
+    read_size = fread(&xp[i], sizeof(float), 1, fp);        // Read x coordinate for each row
     for (int j = 0; j < n; j++){
-      fread(&v[i][j], sizeof(float), 1, fp);    // Read matrix values
+      read_size = fread(&v[i][j], sizeof(float), 1, fp);    // Read matrix values
     }
   }
 
   /** Loop over the domain and assign matrix values to the scalar field */ 
   foreach () {
     int i = (x - ox) * n / width;
-    int j = (y - oy) * n / width;
+    int j = (z - oz) * n / width;
     if (i >= 0 && i < n && j >= 0 && j < n){
       s[] = v[i][j];
     }
@@ -47,27 +50,29 @@ void input_matrix(scalar s, FILE * fp, int n = N, double ox=X0, double oy=Y0, do
 /** 
 ## input_matrix_double(): reads and store the matrix from a double precision binary file 
 */
-void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oy=Y0, double width=L0){
+void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz=Z0, double width=L0){
 
   double nfile;
-  fread(&nfile, sizeof(double), 1, fp);           // Read the matrix size from file
-  n = (int)nfile;                                 // Set matrix size
+  int read_size;
+  NOT_UNUSED(read_size);
+  read_size = fread(&nfile, sizeof(double), 1, fp);           // Read the matrix size from file
+  n = (int)nfile;                                             // Set matrix size
 
-  double yp[n], xp[n];                            // Arrays to store y and x coordinates
-  double **v = matrix_new(n, n, sizeof(double));  // Allocate memory for matrix
+  double yp[n], xp[n];                                        // Arrays to store y and x coordinates
+  double **v = matrix_new(n, n, sizeof(double));              // Allocate memory for matrix
 
-  fread(&yp, sizeof(double), n, fp);              // Read y coordinates from file
+  read_size = fread(&yp, sizeof(double), n, fp);              // Read y coordinates from file
   for (int i = 0; i < n; i++){
-    fread(&xp[i], sizeof(double), 1, fp);         // Read x coordinate for each row
+    read_size = fread(&xp[i], sizeof(double), 1, fp);         // Read x coordinate for each row
     for (int j = 0; j < n; j++){
-      fread(&v[i][j], sizeof(double), 1, fp);     // Read matrix values
+      read_size = fread(&v[i][j], sizeof(double), 1, fp);     // Read matrix values
     }
   }
 
   /** Loop over the domain and assign matrix values to the scalar field */ 
   foreach () {
     int i = (x - ox) * n / width;
-    int j = (y - oy) * n / width;
+    int j = (z - oz) * n / width;
     if (i >= 0 && i < n && j >= 0 && j < n){
       s[] = v[i][j];
     }
