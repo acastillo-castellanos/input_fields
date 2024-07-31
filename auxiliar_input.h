@@ -55,19 +55,53 @@ void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz
   double nfile;
   int read_size;
   NOT_UNUSED(read_size);
-  read_size = fread(&nfile, sizeof(double), 1, fp);           // Read the matrix size from file
-  n = (int)nfile;                                             // Set matrix size
+  
+  double *yp = NULL, *xp = NULL;
+  double **v = NULL;
 
-  double yp[n], xp[n];                                        // Arrays to store y and x coordinates
-  double **v = matrix_new(n, n, sizeof(double));              // Allocate memory for matrix
+  if (pid() == 0) {
+    // Process 0 reads the matrix size from the file
+    read_size = fread(&nfile, sizeof(double), 1, fp);           
+    n = (int)nfile;                                             
 
-  read_size = fread(&yp, sizeof(double), n, fp);              // Read y coordinates from file
-  for (int i = 0; i < n; i++){
-    read_size = fread(&xp[i], sizeof(double), 1, fp);         // Read x coordinate for each row
-    for (int j = 0; j < n; j++){
-      read_size = fread(&v[i][j], sizeof(double), 1, fp);     // Read matrix values
+    // Allocate memory for y, x coordinates and matrix
+    yp = (double *)malloc(n * sizeof(double));
+    xp = (double *)malloc(n * sizeof(double));
+    v = (double **)malloc(n * sizeof(double *));
+    for (int i = 0; i < n; i++) {
+      v[i] = (double *)malloc(n * sizeof(double));
+    }
+
+    read_size = fread(yp, sizeof(double), n, fp);              // Read y coordinates from file
+    for (int i = 0; i < n; i++){
+      read_size = fread(&xp[i], sizeof(double), 1, fp);         // Read x coordinate for each row
+      for (int j = 0; j < n; j++){
+        read_size = fread(&v[i][j], sizeof(double), 1, fp);     // Read matrix values
+      }
     }
   }
+
+#if _MPI
+  /** Broadcast matrix size and allocate memory on all processes */ 
+  MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+  if (pid() != 0) {
+    yp = (double *)malloc(n * sizeof(double));
+    xp = (double *)malloc(n * sizeof(double));
+    v = (double **)malloc(n * sizeof(double *));
+    for (int i = 0; i < n; i++) {
+      v[i] = (double *)malloc(n * sizeof(double));
+    }
+  }
+
+  /** Broadcast y and x coordinates */ 
+  MPI_Bcast(yp, n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Bcast(xp, n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+  /** Broadcast matrix values */ 
+  for (int i = 0; i < n; i++) {
+    MPI_Bcast(v[i], n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  }
+#endif
 
   /** Loop over the domain and assign matrix values to the scalar field */ 
   foreach () {
@@ -78,16 +112,19 @@ void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz
     }
     else{
       s[] = 0.0;
-    }
+    } 
   }
-  matrix_free(v);
+
+  if (v) free(v);
+  if (yp) free(yp);
+  if (xp) free(xp);
 }
 
 /** 
 ## read_matrix(): reads and store the matrix from a double precision binary file 
 */
 void read_matrix(const char *prefix, const char *suffix, scalar s) {
-  char filename[256];
+  char filename[512];
   snprintf(filename, sizeof(filename), "%s%s.bin", prefix, suffix);
   FILE *fp = fopen(filename, "r");
   if (!fp){
