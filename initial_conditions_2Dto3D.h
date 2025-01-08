@@ -1,4 +1,6 @@
 #include "auxiliar_input.h"
+#define cond1(y,d1,d2) ((l[] < level) && ((y < d1) && (y > d2)))
+#define cond2(y,d1,d2,del) ((y > d1+del) || (y < d2-del))
 #define wallbox(d, extra) intersection((d + extra - y), (-d + extra + y))
 void initial_condition_2Dto3D(scalar f, vector u, scalar p, double d1, double d2){
   // Initialize transveral velocity 
@@ -11,7 +13,7 @@ void initial_condition_2Dto3D(scalar f, vector u, scalar p, double d1, double d2
 
   int maxlevel = MAXLEVEL;
   for (int li = maxlevel; li >= 4; li--){
-    unrefine((l[] < level && ((y < d1) && (y > d2))) && level > li);
+    unrefine( (cond1(y,d1,d2) || cond2(y,d1,d2,16*_mindel)) && level > li);
   }
 
   // Then, we read the corresponding fields
@@ -25,3 +27,5 @@ void initial_condition_2Dto3D(scalar f, vector u, scalar p, double d1, double d2
   read_matrix(file_restart_path, "_p", p);
 }
 #undef wallbox
+#undef cond1
+#undef cond2
