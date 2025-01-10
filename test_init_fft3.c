@@ -1,3 +1,13 @@
+/** 
+# Testing `initial_conditions_dimonte_fft2.h`
+
+In this example we initialize a scalar field `f` using an annular spectrum 
+with amplitude 1 and wavenumbers between $k_{min}=25$ and $k_{max}=75$. In this 
+case, we use `isvof=1`. The result should look like this:
+
+![Initialized field](test_init_fft3/test_init_fft3.png)
+*/
+
 #include "grid/octree.h"
 #include "view.h"
 #include "initial_conditions_dimonte_fft2.h"
@@ -21,19 +31,10 @@ int main()
     fractions(phi, f);
   }
 
-
   stats s = statsf (f);
   fprintf (stderr, "# %f %.12f %g %g %g %g\n", t, s.sum, s.min, s.max, s.stddev, s.volume);
 
-  view(camera="top");
-  draw_vof ("f", color="z");
-  save("test1.png");
-
-  view(camera="front");
-  draw_vof ("f", color="z");
-  save("test2.png");
-
   view(camera="iso");
   draw_vof ("f", color="z");
-  save("test3.png");
+  save("test_init_fft3.png");
 }
