@@ -43,114 +43,276 @@
   <div id="status"></div>
     <div id="TOC">
 <ul>
-<li><a href="#input_matrix-reads-a-gnuplot-compatible-binary-file"
-id="toc-input_matrix-reads-a-gnuplot-compatible-binary-file">input_matrix():
-reads a gnuplot-compatible binary file</a>
+<li><a href="#input-functions" id="toc-input-functions">Input
+functions</a>
 <ul>
 <li><a
-href="#input_matrix-reads-and-store-the-matrix-from-the-binary-file"
-id="toc-input_matrix-reads-and-store-the-matrix-from-the-binary-file">input_matrix():
-reads and store the matrix from the binary file</a></li>
+href="#input_matrix-reads-a-matrix-from-a-single-precision-binary-file"
+id="toc-input_matrix-reads-a-matrix-from-a-single-precision-binary-file"><em>input_matrix()</em>:
+reads a matrix from a single precision binary file</a>
+<ul>
+<li><a href="#example-usage" id="toc-example-usage">Example
+Usage</a></li>
+</ul></li>
 <li><a
-href="#input_matrix_double-reads-and-store-the-matrix-from-a-double-precision-binary-file"
-id="toc-input_matrix_double-reads-and-store-the-matrix-from-a-double-precision-binary-file">input_matrix_double():
-reads and store the matrix from a double precision binary file</a></li>
+href="#input_matrix_double-reads-a-matrix-from-a-double-precision-binary-file"
+id="toc-input_matrix_double-reads-a-matrix-from-a-double-precision-binary-file"><em>input_matrix_double()</em>:
+reads a matrix from a double precision binary file</a>
+<ul>
+<li><a href="#example-usage-1" id="toc-example-usage-1">Example
+Usage</a></li>
+</ul></li>
 <li><a
-href="#read_matrix-reads-and-store-the-matrix-from-a-double-precision-binary-file"
-id="toc-read_matrix-reads-and-store-the-matrix-from-a-double-precision-binary-file">read_matrix():
-reads and store the matrix from a double precision binary file</a></li>
+href="#read_matrix-reads-and-stores-a-matrix-from-a-double-precision-binary-file"
+id="toc-read_matrix-reads-and-stores-a-matrix-from-a-double-precision-binary-file"><em>read_matrix()</em>:
+Reads and stores a matrix from a double precision binary file</a>
+<ul>
+<li><a href="#example-usage-2" id="toc-example-usage-2">Example
+Usage</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
-<h1
-id="input_matrix-reads-a-gnuplot-compatible-binary-file">input_matrix():
-reads a gnuplot-compatible binary file</h1>
-<p>These routines read a gnuplot-compatible binary file, i.e., single
-precision matrix stored in the following format:</p>
+<h1 id="input-functions">Input functions</h1>
+<h2
+id="input_matrix-reads-a-matrix-from-a-single-precision-binary-file"><em>input_matrix()</em>:
+reads a matrix from a single precision binary file</h2>
+<p>This function reads a matrix from a gnuplot-compatible binary file
+and stores it in a <span class="dt">scalar</span> field. The binary file format is expected to
+be:</p>
 <pre><code> &lt;N+1&gt;  &lt;y0&gt;   &lt;y1&gt;   &lt;y2&gt;  ...  &lt;yN&gt;
  &lt;x0&gt; &lt;z0,0&gt; &lt;z0,1&gt; &lt;z0,2&gt; ... &lt;z0,N&gt;
  &lt;x1&gt; &lt;z1,0&gt; &lt;z1,1&gt; &lt;z1,2&gt; ... &lt;z1,N&gt;</code></pre>
-<p>For example: using <code>input_matrix(T, fp, N, X0, Y0, L0)</code>
-will read a square matrix of size <code>N</code> from file descriptor
-<code>fp</code> into a <span class="dt">scalar</span> field <code>T</code>.</p>
+<p>The matrix values are then assigned to the <span class="dt">scalar</span> field
+<code>s</code> based on the coordinates and width provided.</p>
+<p>The arguments and their default values are:</p>
+<dl>
+<dt><em>s</em></dt>
+<dd>
+<span class="dt">scalar</span> field where the matrix values will be assigned.
+</dd>
+<dt><em>fp</em></dt>
+<dd>
+file pointer to the binary file.
+</dd>
+<dt><em>n</em></dt>
+<dd>
+size of the matrix. Default is <em>N</em>.
+</dd>
+<dt><em>ox</em></dt>
+<dd>
+x-coordinate offset. Default is <em>X0</em>.
+</dd>
+<dt><em>oz</em></dt>
+<dd>
+z-coordinate offset. Default is <em>Z0</em>.
+</dd>
+<dt><em>width</em></dt>
+<dd>
+width for mapping the matrix to the <span class="dt">scalar</span> field. Default is
+<em>L0</em>.
+</dd>
+</dl>
+<h3 id="example-usage">Example Usage</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">FILE</span> <span class="op">*</span>fp <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/fopen.3.html>fopen</a><span class="op">(</span><span class="st">&quot;matrix_single.bin&quot;</span><span class="op">,</span> <span class="st">&quot;rb&quot;</span><span class="op">);</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>fp <span class="op">==</span> NULL<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    perror<span class="op">(</span><span class="st">&quot;Failed to open file&quot;</span><span class="op">);</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/exit.3.html>exit</a><span class="op">(</span>EXIT_FAILURE<span class="op">);</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>input_matrix<span class="op">(</span>s<span class="op">,</span> fp<span class="op">);</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><a href=http://man7.org/linux/man-pages/man3/fclose.3.html>fclose</a><span class="op">(</span>fp<span class="op">);</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> input_matrix<span class="op">(</span><span class="dt">scalar</span> s<span class="op">,</span> <span class="dt">FILE</span> <span class="op">*</span> fp<span class="op">,</span> <span class="dt">int</span> n <span class="op">=</span> N<span class="op">,</span> <span class="dt">double</span> ox<span class="op">=</span>X0<span class="op">,</span> <span class="dt">double</span> oz<span class="op">=</span>Z0<span class="op">,</span> <span class="dt">double</span> width<span class="op">=</span>L0<span class="op">){</span><span id=50></span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span id=51></span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> nfile<span class="op">;</span><span id=52></span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> read_size<span class="op">;</span><span id=53></span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  NOT_UNUSED<span class="op">(</span>read_size<span class="op">);</span><span id=54></span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span id=55></span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Read the matrix size from file<span id=56></span></span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  read_size <span class="op">=</span> fread<span class="op">(&amp;</span>nfile<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span><span id=57></span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  n <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>nfile<span class="op">;</span>                                 <span id=58></span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span id=59></span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Allocate memory for coordinates and matrix<span id=60></span></span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> yp<span class="op">[</span>n<span class="op">],</span> xp<span class="op">[</span>n<span class="op">];</span>                                       <span id=61></span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> <span class="op">**</span>v <span class="op">=</span> matrix_new<span class="op">(</span>n<span class="op">,</span> n<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">));</span>              <span id=62></span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span id=63></span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Read y coordinates from file<span id=64></span></span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  read_size <span class="op">=</span> fread<span class="op">(&amp;</span>yp<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> n<span class="op">,</span> fp<span class="op">);</span>             <span id=65></span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++){</span><span id=66></span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Read x coordinate for each row<span id=67></span></span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    read_size <span class="op">=</span> fread<span class="op">(&amp;</span>xp<span class="op">[</span>i<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>        <span id=68></span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n<span class="op">;</span> j<span class="op">++){</span><span id=69></span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Read matrix values<span id=70></span></span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      read_size <span class="op">=</span> fread<span class="op">(&amp;</span>v<span class="op">[</span>i<span class="op">][</span>j<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>    <span id=71></span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=72></span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=73></span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span id=74></span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Loop over the domain and assign matrix values to the <span class="dt">scalar</span> field<span id=75></span></span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <a href=http://basilisk.fr/Basilisk%20C#iterators>foreach</a> <span class="op">()</span> <span class="op">{</span><span id=76></span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> i <span class="op">=</span> <span class="op">(</span>x <span class="op">-</span> ox<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=77></span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j <span class="op">=</span> <span class="op">(</span>z <span class="op">-</span> oz<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=78></span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> i <span class="op">&lt;</span> n <span class="op">&amp;&amp;</span> j <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> j <span class="op">&lt;</span> n<span class="op">){</span><span id=79></span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> v<span class="op">[</span>i<span class="op">][</span>j<span class="op">];</span><span id=80></span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=81></span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span><span class="op">{</span><span id=82></span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> <span class="dv">0</span><span class="er">.0</span><span class="op">;</span><span id=83></span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=84></span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=85></span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  matrix_free<span class="op">(</span>v<span class="op">);</span><span id=86></span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=87></span><span id=88></span></span></code></pre></div>
 <h2
-id="input_matrix-reads-and-store-the-matrix-from-the-binary-file">input_matrix():
-reads and store the matrix from the binary file</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> input_matrix<span class="op">(</span><span class="dt">scalar</span> s<span class="op">,</span> <span class="dt">FILE</span> <span class="op">*</span> fp<span class="op">,</span> <span class="dt">int</span> n <span class="op">=</span> N<span class="op">,</span> <span class="dt">double</span> ox<span class="op">=</span>X0<span class="op">,</span> <span class="dt">double</span> oy<span class="op">=</span>Y0<span class="op">,</span> <span class="dt">double</span> width<span class="op">=</span>L0<span class="op">){</span><span id=16></span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span id=17></span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> nfile<span class="op">;</span><span id=18></span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  fread<span class="op">(&amp;</span>nfile<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>          <span class="co">// Read the matrix size from file<span id=19></span></span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  n <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>nfile<span class="op">;</span>                               <span class="co">// Set matrix size<span id=20></span></span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span id=21></span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> yp<span class="op">[</span>n<span class="op">],</span> xp<span class="op">[</span>n<span class="op">];</span>                           <span class="co">// Arrays to store y and x coordinates<span id=22></span></span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> <span class="op">**</span>v <span class="op">=</span> matrix_new<span class="op">(</span>n<span class="op">,</span> n<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">));</span>  <span class="co">// Allocate memory for matrix<span id=23></span></span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span id=24></span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  fread<span class="op">(&amp;</span>yp<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> n<span class="op">,</span> fp<span class="op">);</span>             <span class="co">// Read y coordinates from file<span id=25></span></span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++){</span><span id=26></span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    fread<span class="op">(&amp;</span>xp<span class="op">[</span>i<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>        <span class="co">// Read x coordinate for each row<span id=27></span></span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n<span class="op">;</span> j<span class="op">++){</span><span id=28></span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      fread<span class="op">(&amp;</span>v<span class="op">[</span>i<span class="op">][</span>j<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>    <span class="co">// Read matrix values<span id=29></span></span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=30></span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=31></span><span id=32></span></span></code></pre></div>
+id="input_matrix_double-reads-a-matrix-from-a-double-precision-binary-file"><em>input_matrix_double()</em>:
+reads a matrix from a double precision binary file</h2>
+<p>This function reads a matrix from a gnuplot-compatible binary file
+and stores it in a <span class="dt">scalar</span> field. The binary file format is expected to
+be:</p>
+<pre><code> &lt;N+1&gt;  &lt;y0&gt;   &lt;y1&gt;   &lt;y2&gt;  ...  &lt;yN&gt;
+ &lt;x0&gt; &lt;z0,0&gt; &lt;z0,1&gt; &lt;z0,2&gt; ... &lt;z0,N&gt;
+ &lt;x1&gt; &lt;z1,0&gt; &lt;z1,1&gt; &lt;z1,2&gt; ... &lt;z1,N&gt;</code></pre>
+<p>The matrix values are then assigned to the <span class="dt">scalar</span> field
+<code>s</code> based on the coordinates and width provided.</p>
+<p>The arguments and their default values are:</p>
+<dl>
+<dt><em>s</em></dt>
+<dd>
+<span class="dt">scalar</span> field where the matrix values will be assigned.
+</dd>
+<dt><em>fp</em></dt>
+<dd>
+file pointer to the binary file.
+</dd>
+<dt><em>n</em></dt>
+<dd>
+size of the matrix. Default is <em>N</em>.
+</dd>
+<dt><em>ox</em></dt>
+<dd>
+x-coordinate offset. Default is <em>X0</em>.
+</dd>
+<dt><em>oz</em></dt>
+<dd>
+z-coordinate offset. Default is <em>Z0</em>.
+</dd>
+<dt><em>width</em></dt>
+<dd>
+width for mapping the matrix to the <span class="dt">scalar</span> field. Default is
+<em>L0</em>.
+</dd>
+</dl>
+<h3 id="example-usage-1">Example Usage</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">FILE</span> <span class="op">*</span>fp <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/fopen.3.html>fopen</a><span class="op">(</span><span class="st">&quot;matrix_double.bin&quot;</span><span class="op">,</span> <span class="st">&quot;rb&quot;</span><span class="op">);</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>fp <span class="op">==</span> NULL<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    perror<span class="op">(</span><span class="st">&quot;Failed to open file&quot;</span><span class="op">);</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/exit.3.html>exit</a><span class="op">(</span>EXIT_FAILURE<span class="op">);</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><a href=auxiliar_input.h#input_matrix_double>input_matrix_double</a><span class="op">(</span>s<span class="op">,</span> fp<span class="op">);</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><a href=http://man7.org/linux/man-pages/man3/fclose.3.html>fclose</a><span class="op">(</span>fp<span class="op">);</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <a href=auxiliar_input.h#input_matrix_double>input_matrix_double</a><span class="op">(</span><span class="dt">scalar</span> s<span class="op">,</span> <span class="dt">FILE</span> <span class="op">*</span> fp<span class="op">,</span> <span class="dt">int</span> n <span class="op">=</span> N<span class="op">,</span> <span class="dt">double</span> ox<span class="op">=</span>X0<span class="op">,</span> <span class="dt">double</span> oz<span class="op">=</span>Z0<span class="op">,</span> <span class="dt">double</span> width<span class="op">=</span>L0<span class="op">){</span><span id=138></span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span id=139></span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> nfile<span class="op">;</span><span id=140></span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> read_size<span class="op">;</span><span id=141></span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  NOT_UNUSED<span class="op">(</span>read_size<span class="op">);</span><span id=142></span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span id=143></span>  </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>yp <span class="op">=</span> NULL<span class="op">,</span> <span class="op">*</span>xp <span class="op">=</span> NULL<span class="op">;</span><span id=144></span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">**</span>v <span class="op">=</span> NULL<span class="op">;</span><span id=145></span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span id=146></span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>pid<span class="op">()</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span><span id=147></span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Process 0 reads the matrix size from the file<span id=148></span></span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    read_size <span class="op">=</span> fread<span class="op">(&amp;</span>nfile<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>           <span id=149></span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>nfile<span class="op">;</span>                                             <span id=150></span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span id=151></span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Allocate memory for y, x coordinates and matrix<span id=152></span></span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    yp <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=153></span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    xp <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=154></span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    v <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">**)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span> <span class="op">*));</span><span id=155></span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span><span id=156></span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      v<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=157></span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=158></span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span id=159></span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Read y coordinates from file<span id=160></span></span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    read_size <span class="op">=</span> fread<span class="op">(</span>yp<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> n<span class="op">,</span> fp<span class="op">);</span>              <span id=161></span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++){</span><span id=162></span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Read x coordinate for each row<span id=163></span></span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>      read_size <span class="op">=</span> fread<span class="op">(&amp;</span>xp<span class="op">[</span>i<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>         <span id=164></span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n<span class="op">;</span> j<span class="op">++){</span><span id=165></span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Read matrix values<span id=166></span></span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        read_size <span class="op">=</span> fread<span class="op">(&amp;</span>v<span class="op">[</span>i<span class="op">][</span>j<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>     <span id=167></span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span><span id=168></span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=169></span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=170></span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span id=171></span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="pp">#if _MPI<span id=172></span></span></span></code></pre></div>
+<p>Broadcast matrix size and allocate memory on all processes</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>  MPI_Bcast<span class="op">(&amp;</span>n<span class="op">,</span> <span class="dv">1</span><span class="op">,</span> MPI_INT<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> MPI_COMM_WORLD<span class="op">);</span><span id=174></span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>pid<span class="op">()</span> <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span><span id=175></span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    yp <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=176></span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    xp <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=177></span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    v <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">**)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span> <span class="op">*));</span><span id=178></span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span><span id=179></span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      v<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="op">(</span><span class="dt">double</span> <span class="op">*)</span><a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span>n <span class="op">*</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span><span id=180></span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=181></span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=182></span><span id=183></span></span></code></pre></div>
+<p>Broadcast y and x coordinates</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  MPI_Bcast<span class="op">(</span>yp<span class="op">,</span> n<span class="op">,</span> MPI_DOUBLE<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> MPI_COMM_WORLD<span class="op">);</span><span id=185></span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  MPI_Bcast<span class="op">(</span>xp<span class="op">,</span> n<span class="op">,</span> MPI_DOUBLE<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> MPI_COMM_WORLD<span class="op">);</span><span id=186></span><span id=187></span></span></code></pre></div>
+<p>Broadcast matrix values</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span><span id=189></span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    MPI_Bcast<span class="op">(</span>v<span class="op">[</span>i<span class="op">],</span> n<span class="op">,</span> MPI_DOUBLE<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> MPI_COMM_WORLD<span class="op">);</span><span id=190></span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=191></span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif<span id=192></span><span id=193></span></span></span></code></pre></div>
 <p>Loop over the domain and assign matrix values to the <span class="dt">scalar</span> field</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <a href=http://basilisk.fr/Basilisk%20C#iterators>foreach</a> <span class="op">()</span> <span class="op">{</span><span id=34></span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> i <span class="op">=</span> <span class="op">(</span>x <span class="op">-</span> ox<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=35></span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j <span class="op">=</span> <span class="op">(</span>y <span class="op">-</span> oy<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=36></span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> i <span class="op">&lt;</span> n <span class="op">&amp;&amp;</span> j <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> j <span class="op">&lt;</span> n<span class="op">){</span><span id=37></span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> v<span class="op">[</span>i<span class="op">][</span>j<span class="op">];</span><span id=38></span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=39></span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span><span class="op">{</span><span id=40></span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> <span class="dv">0</span><span class="er">.0</span><span class="op">;</span><span id=41></span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=42></span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=43></span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  matrix_free<span class="op">(</span>v<span class="op">);</span><span id=44></span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=45></span><span id=46></span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  <a href=http://basilisk.fr/Basilisk%20C#iterators>foreach</a> <span class="op">()</span> <span class="op">{</span><span id=195></span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> i <span class="op">=</span> <span class="op">(</span>x <span class="op">-</span> ox<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=196></span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j <span class="op">=</span> <span class="op">(</span>z <span class="op">-</span> oz<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=197></span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> i <span class="op">&lt;</span> n <span class="op">&amp;&amp;</span> j <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> j <span class="op">&lt;</span> n<span class="op">){</span><span id=198></span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> v<span class="op">[</span>i<span class="op">][</span>j<span class="op">];</span><span id=199></span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=200></span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span><span class="op">{</span><span id=201></span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> <span class="dv">0</span><span class="er">.0</span><span class="op">;</span><span id=202></span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span id=203></span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=204></span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span id=205></span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>v<span class="op">)</span> <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>v<span class="op">);</span><span id=206></span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>yp<span class="op">)</span> <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>yp<span class="op">);</span><span id=207></span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>xp<span class="op">)</span> <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>xp<span class="op">);</span><span id=208></span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=209></span><span id=210></span></span></code></pre></div>
 <h2
-id="input_matrix_double-reads-and-store-the-matrix-from-a-double-precision-binary-file">input_matrix_double():
-reads and store the matrix from a double precision binary file</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <a href=auxiliar_input.h#input_matrix_double>input_matrix_double</a><span class="op">(</span><span class="dt">scalar</span> s<span class="op">,</span> <span class="dt">FILE</span> <span class="op">*</span> fp<span class="op">,</span> <span class="dt">int</span> n <span class="op">=</span> N<span class="op">,</span> <span class="dt">double</span> ox<span class="op">=</span>X0<span class="op">,</span> <span class="dt">double</span> oy<span class="op">=</span>Y0<span class="op">,</span> <span class="dt">double</span> width<span class="op">=</span>L0<span class="op">){</span><span id=50></span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span id=51></span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> nfile<span class="op">;</span><span id=52></span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  fread<span class="op">(&amp;</span>nfile<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>           <span class="co">// Read the matrix size from file<span id=53></span></span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  n <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>nfile<span class="op">;</span>                                 <span class="co">// Set matrix size<span id=54></span></span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span id=55></span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> yp<span class="op">[</span>n<span class="op">],</span> xp<span class="op">[</span>n<span class="op">];</span>                            <span class="co">// Arrays to store y and x coordinates<span id=56></span></span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">**</span>v <span class="op">=</span> matrix_new<span class="op">(</span>n<span class="op">,</span> n<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">));</span>  <span class="co">// Allocate memory for matrix<span id=57></span></span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span id=58></span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  fread<span class="op">(&amp;</span>yp<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> n<span class="op">,</span> fp<span class="op">);</span>              <span class="co">// Read y coordinates from file<span id=59></span></span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++){</span><span id=60></span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    fread<span class="op">(&amp;</span>xp<span class="op">[</span>i<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>         <span class="co">// Read x coordinate for each row<span id=61></span></span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n<span class="op">;</span> j<span class="op">++){</span><span id=62></span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      fread<span class="op">(&amp;</span>v<span class="op">[</span>i<span class="op">][</span>j<span class="op">],</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">),</span> <span class="dv">1</span><span class="op">,</span> fp<span class="op">);</span>     <span class="co">// Read matrix values<span id=63></span></span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=64></span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=65></span><span id=66></span></span></code></pre></div>
-<p>Loop over the domain and assign matrix values to the <span class="dt">scalar</span> field</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <a href=http://basilisk.fr/Basilisk%20C#iterators>foreach</a> <span class="op">()</span> <span class="op">{</span><span id=68></span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> i <span class="op">=</span> <span class="op">(</span>x <span class="op">-</span> ox<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=69></span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> j <span class="op">=</span> <span class="op">(</span>y <span class="op">-</span> oy<span class="op">)</span> <span class="op">*</span> n <span class="op">/</span> width<span class="op">;</span><span id=70></span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> i <span class="op">&lt;</span> n <span class="op">&amp;&amp;</span> j <span class="op">&gt;=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> j <span class="op">&lt;</span> n<span class="op">){</span><span id=71></span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> v<span class="op">[</span>i<span class="op">][</span>j<span class="op">];</span><span id=72></span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=73></span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span><span class="op">{</span><span id=74></span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      s<span class="op">[]</span> <span class="op">=</span> <span class="dv">0</span><span class="er">.0</span><span class="op">;</span><span id=75></span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=76></span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=77></span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  matrix_free<span class="op">(</span>v<span class="op">);</span><span id=78></span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=79></span><span id=80></span></span></code></pre></div>
-<h2
-id="read_matrix-reads-and-store-the-matrix-from-a-double-precision-binary-file">read_matrix():
-reads and store the matrix from a double precision binary file</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> read_matrix<span class="op">(</span><span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>prefix<span class="op">,</span> <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>suffix<span class="op">,</span> <span class="dt">scalar</span> s<span class="op">)</span> <span class="op">{</span><span id=84></span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> filename<span class="op">[</span><span class="dv">256</span><span class="op">];</span><span id=85></span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  snprintf<span class="op">(</span>filename<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>filename<span class="op">),</span> <span class="st">&quot;</span><span class="sc">%s%s</span><span class="st">.bin&quot;</span><span class="op">,</span> prefix<span class="op">,</span> suffix<span class="op">);</span><span id=86></span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">FILE</span> <span class="op">*</span>fp <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/fopen.3.html>fopen</a><span class="op">(</span>filename<span class="op">,</span> <span class="st">&quot;r&quot;</span><span class="op">);</span><span id=87></span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(!</span>fp<span class="op">){</span><span id=88></span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/printf.3.html>printf</a><span class="op">(</span><span class="st">&quot;Binary file </span><span class="sc">%s</span><span class="st"> not found</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> filename<span class="op">);</span><span id=89></span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/exit.3.html>exit</a><span class="op">(</span>EXIT_FAILURE<span class="op">);</span><span id=90></span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=91></span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <a href=auxiliar_input.h#input_matrix_double>input_matrix_double</a><span class="op">(</span>s<span class="op">,</span> fp<span class="op">,</span> N<span class="op">,</span> X0<span class="op">,</span> Y0<span class="op">,</span> L0<span class="op">);</span><span id=92></span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/fclose.3.html>fclose</a><span class="op">(</span>fp<span class="op">);</span><span id=93></span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=94></span></span></code></pre></div>
+id="read_matrix-reads-and-stores-a-matrix-from-a-double-precision-binary-file"><em>read_matrix()</em>:
+Reads and stores a matrix from a double precision binary file</h2>
+<p>This function constructs a filename using the provided prefix and
+suffix, opens the corresponding binary file, and reads the matrix data
+into a <span class="dt">scalar</span> field using the <code>input_matrix_double</code> function.
+The binary file is expected to contain double precision matrix data.</p>
+<p>The arguments and their default values are:</p>
+<dl>
+<dt><em>prefix</em></dt>
+<dd>
+prefix for the filename.
+</dd>
+<dt><em>suffix</em></dt>
+<dd>
+suffix for the filename.
+</dd>
+<dt><em>s</em></dt>
+<dd>
+<span class="dt">scalar</span> field where the matrix values will be assigned.
+</dd>
+</dl>
+<h3 id="example-usage-2">Example Usage</h3>
+<p>This function reads a file <code>test_input_matrix.bin</code> and
+stores the content into a <span class="dt">scalar</span> field <code>s</code>.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>read_matrix<span class="op">(</span><span class="st">&quot;test_&quot;</span><span class="op">,</span> <span class="st">&quot;input_matrix&quot;</span><span class="op">,</span> s<span class="op">);</span></span></code></pre></div>
+<p>see, also <a href="test_input_matrix.c">example use</a></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> read_matrix<span class="op">(</span><span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>prefix<span class="op">,</span> <span class="dt">const</span> <span class="dt">char</span> <span class="op">*</span>suffix<span class="op">,</span> <span class="dt">scalar</span> s<span class="op">)</span> <span class="op">{</span><span id=237></span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span> filename<span class="op">[</span><span class="dv">1030</span><span class="op">];</span><span id=238></span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  snprintf<span class="op">(</span>filename<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>filename<span class="op">),</span> <span class="st">&quot;</span><span class="sc">%s%s</span><span class="st">.bin&quot;</span><span class="op">,</span> prefix<span class="op">,</span> suffix<span class="op">);</span><span id=239></span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">FILE</span> <span class="op">*</span>fp <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/fopen.3.html>fopen</a><span class="op">(</span>filename<span class="op">,</span> <span class="st">&quot;r&quot;</span><span class="op">);</span><span id=240></span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(!</span>fp<span class="op">){</span><span id=241></span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/printf.3.html>printf</a><span class="op">(</span><span class="st">&quot;Binary file </span><span class="sc">%s</span><span class="st"> not found</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> filename<span class="op">);</span><span id=242></span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/exit.3.html>exit</a><span class="op">(</span>EXIT_FAILURE<span class="op">);</span><span id=243></span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=244></span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <a href=auxiliar_input.h#input_matrix_double>input_matrix_double</a><span class="op">(</span>s<span class="op">,</span> fp<span class="op">);</span><span id=245></span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <a href=http://man7.org/linux/man-pages/man3/fclose.3.html>fclose</a><span class="op">(</span>fp<span class="op">);</span><span id=246></span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=247></span></span></code></pre></div>
 </div>
 <div id="footer">
 inspired by <a href="http://github.com/jgm/gitit/tree/master/">gitit</a>,
@@ -212,6 +374,6 @@ powered by <a href="http://basilisk.fr/src/darcsit/README">darcsit</a>
 </div>
                             </div>
     </div>
-    
+    <script src="/js/status.js" type="text/javascript"></script>
       </body>
 </html>
