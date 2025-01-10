@@ -124,7 +124,7 @@ void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz
 ## read_matrix(): reads and store the matrix from a double precision binary file 
 */
 void read_matrix(const char *prefix, const char *suffix, scalar s) {
-  char filename[512];
+  char filename[1030];
   snprintf(filename, sizeof(filename), "%s%s.bin", prefix, suffix);
   FILE *fp = fopen(filename, "r");
   if (!fp){
