@@ -21,16 +21,15 @@ In this case, we take the example from the tutorial (see
 [bump.c](http://basilisk.fr/Tutorial)) but instead of the Gaussian bump, we use
 an arbitrary condition (a Cardioid) produced by the matlab routine.
 
-~~~ {.c}       
 */
 #include "saint-venant.h"
 #include "auxiliar_input.h"
 
 event init (t = 0) {
-	FILE * fp = fopen("test_input_matrix.bin", "r");
-	if (!fp) printf("Binary file not found");
-	input_matrix(h,fp,N,X0,Y0,L0);
-	fclose (fp);
+  FILE * fp = fopen("test_input_matrix.bin", "r");
+  if (!fp) printf("Binary file not found");
+  input_matrix(h,fp,N,X0,Y0,L0);
+  fclose (fp);
 }
 
 event end (i = 10) {
@@ -51,7 +50,6 @@ event end (i = 300){
 }
 
 /**
-~~~
 
 ## Output
 

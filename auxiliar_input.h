@@ -1,7 +1,10 @@
 /**
-# input_matrix(): reads a gnuplot-compatible binary file
-These routines read a gnuplot-compatible binary file, i.e., single precision
-matrix stored in the following format:
+# Input functions
+
+## *input_matrix()*: reads a matrix from a single precision binary file 
+
+This function reads a matrix from a gnuplot-compatible binary file and stores it
+in a scalar field. The binary file format is expected to be:
 
 ```
  <N+1>  <y0>   <y1>   <y2>  ...  <yN>
@@ -9,31 +12,67 @@ matrix stored in the following format:
  <x1> <z1,0> <z1,1> <z1,2> ... <z1,N>
 ```
 
-For example: using `input_matrix(T, fp, N, X0, Y0, L0)` will read a square
-matrix of size `N` from file descriptor `fp` into a scalar field `T`.
+The matrix values are then assigned to the scalar field `s` based on the
+coordinates and width provided.
 
-## input_matrix(): reads and store the matrix from the binary file */
+The arguments and their default values are:
+
+*s*
+: scalar field where the matrix values will be assigned.
+
+*fp*
+: file pointer to the binary file.
+
+*n*
+: size of the matrix. Default is *N*.
+
+*ox*
+: x-coordinate offset. Default is *X0*.
+
+*oz*
+: z-coordinate offset. Default is *Z0*.
+
+*width*
+: width for mapping the matrix to the scalar field. Default is *L0*.
+
+### Example Usage
+
+```c
+FILE *fp = fopen("matrix_single.bin", "rb");
+if (fp == NULL) {
+    perror("Failed to open file");
+    exit(EXIT_FAILURE);
+}
+input_matrix(s, fp);
+fclose(fp);
+```
+*/
 void input_matrix(scalar s, FILE * fp, int n = N, double ox=X0, double oz=Z0, double width=L0){
 
   float nfile;
   int read_size;
   NOT_UNUSED(read_size);
 
-  read_size = fread(&nfile, sizeof(float), 1, fp);          // Read the matrix size from file
-  n = (int)nfile;                                           // Set matrix size
+  // Read the matrix size from file
+  read_size = fread(&nfile, sizeof(float), 1, fp);
+  n = (int)nfile;                                 
 
-  float yp[n], xp[n];                                       // Arrays to store y and x coordinates
-  float **v = matrix_new(n, n, sizeof(float));              // Allocate memory for matrix
+  // Allocate memory for coordinates and matrix
+  float yp[n], xp[n];                                       
+  float **v = matrix_new(n, n, sizeof(float));              
 
-  read_size = fread(&yp, sizeof(float), n, fp);             // Read y coordinates from file
+  // Read y coordinates from file
+  read_size = fread(&yp, sizeof(float), n, fp);             
   for (int i = 0; i < n; i++){
-    read_size = fread(&xp[i], sizeof(float), 1, fp);        // Read x coordinate for each row
+    // Read x coordinate for each row
+    read_size = fread(&xp[i], sizeof(float), 1, fp);        
     for (int j = 0; j < n; j++){
-      read_size = fread(&v[i][j], sizeof(float), 1, fp);    // Read matrix values
+      // Read matrix values
+      read_size = fread(&v[i][j], sizeof(float), 1, fp);    
     }
   }
 
-  /** Loop over the domain and assign matrix values to the scalar field */ 
+  // Loop over the domain and assign matrix values to the scalar field
   foreach () {
     int i = (x - ox) * n / width;
     int j = (z - oz) * n / width;
@@ -48,7 +87,53 @@ void input_matrix(scalar s, FILE * fp, int n = N, double ox=X0, double oz=Z0, do
 }
 
 /** 
-## input_matrix_double(): reads and store the matrix from a double precision binary file 
+## *input_matrix_double()*: reads a matrix from a double precision binary file 
+
+This function reads a matrix from a gnuplot-compatible binary file and stores it
+in a scalar field. The binary file format is expected to be:
+
+```
+ <N+1>  <y0>   <y1>   <y2>  ...  <yN>
+ <x0> <z0,0> <z0,1> <z0,2> ... <z0,N>
+ <x1> <z1,0> <z1,1> <z1,2> ... <z1,N>
+```
+
+The matrix values are then assigned to the scalar field `s` based on the
+coordinates and width provided.
+
+
+The arguments and their default values are:
+
+*s*
+: scalar field where the matrix values will be assigned.
+
+*fp*
+: file pointer to the binary file.
+
+*n*
+: size of the matrix. Default is *N*.
+
+*ox*
+: x-coordinate offset. Default is *X0*.
+
+*oz*
+: z-coordinate offset. Default is *Z0*.
+
+*width*
+: width for mapping the matrix to the scalar field. Default is *L0*.
+
+### Example Usage
+
+```c
+FILE *fp = fopen("matrix_double.bin", "rb");
+if (fp == NULL) {
+    perror("Failed to open file");
+    exit(EXIT_FAILURE);
+}
+input_matrix_double(s, fp);
+fclose(fp);
+```
+
 */
 void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz=Z0, double width=L0){
 
@@ -72,11 +157,14 @@ void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz
       v[i] = (double *)malloc(n * sizeof(double));
     }
 
-    read_size = fread(yp, sizeof(double), n, fp);              // Read y coordinates from file
+    // Read y coordinates from file
+    read_size = fread(yp, sizeof(double), n, fp);              
     for (int i = 0; i < n; i++){
-      read_size = fread(&xp[i], sizeof(double), 1, fp);         // Read x coordinate for each row
+      // Read x coordinate for each row
+      read_size = fread(&xp[i], sizeof(double), 1, fp);         
       for (int j = 0; j < n; j++){
-        read_size = fread(&v[i][j], sizeof(double), 1, fp);     // Read matrix values
+        // Read matrix values
+        read_size = fread(&v[i][j], sizeof(double), 1, fp);     
       }
     }
   }
@@ -121,7 +209,30 @@ void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz
 }
 
 /** 
-## read_matrix(): reads and store the matrix from a double precision binary file 
+## *read_matrix()*: Reads and stores a matrix from a double precision binary file
+
+This function constructs a filename using the provided prefix and suffix, opens the corresponding binary file, and reads the matrix data into a scalar field using the `input_matrix_double` function. The binary file is expected to contain double precision matrix data.
+
+The arguments and their default values are:
+
+*prefix*
+: prefix for the filename.
+
+*suffix*
+: suffix for the filename.
+
+*s*
+: scalar field where the matrix values will be assigned.
+
+### Example Usage
+
+This function reads a file `test_input_matrix.bin` and stores the content into 
+a scalar field `s`.
+```c
+read_matrix("test_", "input_matrix", s);
+```
+see, also [example use](test_input_matrix.c)
+
 */
 void read_matrix(const char *prefix, const char *suffix, scalar s) {
   char filename[1030];
@@ -131,6 +242,6 @@ void read_matrix(const char *prefix, const char *suffix, scalar s) {
     printf("Binary file %s not found\n", filename);
     exit(EXIT_FAILURE);
   }
-  input_matrix_double(s, fp, N, X0, Y0, L0);
+  input_matrix_double(s, fp);
   fclose(fp);
 }
