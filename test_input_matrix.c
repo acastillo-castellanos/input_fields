@@ -28,7 +28,7 @@ an arbitrary condition (a Cardioid) produced by the matlab routine.
 event init (t = 0) {
   FILE * fp = fopen("test_input_matrix.bin", "r");
   if (!fp) printf("Binary file not found");
-  input_matrix(h,fp,N,X0,Y0,L0);
+  input_matrix(h,fp);
   fclose (fp);
 }
 

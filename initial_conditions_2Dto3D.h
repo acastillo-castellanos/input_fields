@@ -11,10 +11,12 @@ void initial_condition_2Dto3D(scalar f, vector u, scalar p, double d1, double d2
   scalar l[];
   read_matrix(file_restart_path, "_l", l);      
 
+#if dimension == 3
   int maxlevel = MAXLEVEL;
   for (int li = maxlevel; li >= 4; li--){
     unrefine( (cond1(y,d1,d2) || cond2(y,d1,d2,16*_mindel)) && level > li);
   }
+#endif
 
   // Then, we read the corresponding fields
   read_matrix(file_restart_path, "_f", f);

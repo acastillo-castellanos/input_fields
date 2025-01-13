@@ -75,7 +75,11 @@ void input_matrix(scalar s, FILE * fp, int n = N, double ox=X0, double oz=Z0, do
   // Loop over the domain and assign matrix values to the scalar field
   foreach () {
     int i = (x - ox) * n / width;
+#if dimension == 3
     int j = (z - oz) * n / width;
+#elif dimension == 2
+    int j = (y - oz) * n / width;
+#endif
     if (i >= 0 && i < n && j >= 0 && j < n){
       s[] = v[i][j];
     }
@@ -194,7 +198,11 @@ void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz
   /** Loop over the domain and assign matrix values to the scalar field */ 
   foreach () {
     int i = (x - ox) * n / width;
+#if dimension == 3
     int j = (z - oz) * n / width;
+#elif dimension == 2
+    int j = (y - oz) * n / width;
+#endif
     if (i >= 0 && i < n && j >= 0 && j < n){
       s[] = v[i][j];
     }
@@ -203,9 +211,12 @@ void input_matrix_double(scalar s, FILE * fp, int n = N, double ox=X0, double oz
     } 
   }
 
-  if (v) free(v);
   if (yp) free(yp);
   if (xp) free(xp);
+  for (int i = 0; i < n; i++) {
+    free(v[i]);
+  }
+  free(v);  
 }
 
 /** 
