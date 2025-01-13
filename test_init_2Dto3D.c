@@ -18,7 +18,7 @@ In this example use the results from a 2D two-phase simulation to initialize a
 ```
 Results correpond to a square domain with $L_x=L_x=0.24$ using 4096x4096
 points. We may load results from a region of size $L'_x=L'_x=0.03$ using
-$512x512$ points. The file is converted into a gnuplot-compatible format (in
+512x512 points. The file is converted into a gnuplot-compatible format (in
 double precision) using
 [convert_snapshots_to_binary.py](convert_snapshots_to_binary.py) as follows:
 ```
