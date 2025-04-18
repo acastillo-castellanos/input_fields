@@ -26,7 +26,7 @@ int main()
   scalar f[];
   {
     vertex scalar phi[];
-    initial_condition_dimonte_fft(phi, 0.01, kmin = 25, kmax = 75);
+    initial_condition_dimonte_fft(phi, 0.01, NX=N, kmin = 25, kmax = 75);
     fractions(phi, f);
   }
 
