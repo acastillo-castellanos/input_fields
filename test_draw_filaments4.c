@@ -57,9 +57,9 @@ int main()
   double H=pi;
   double dtheta = 2*pi/((double)nseg_per_turn);
   double theta[nseg], a[nseg];
-  coord C[nseg], dC[nseg], d2C[nseg], d3C[nseg];
+  coord C[nseg];
 
-  // 1. Define a curve 
+  // Define a curve 
   for (int i = 0; i < nseg; i++){
     theta[i] = dtheta * (double)i - 2*pi;
     C[i].x = R * cos(theta[i]);
@@ -74,58 +74,33 @@ int main()
     save ("prescribed_curve.png");
   }
 
-  // 2. Find the 1st, 2nd, and 3rd derivatives of C
+  // Initialize the vortex filament
   coord xshift = {0, 0, turns*H}, dxshift = {0, 0, 0};
-  fd_derivative(nseg, dtheta,  xshift,   C,  dC);
-  fd_derivative(nseg, dtheta, dxshift,  dC, d2C);
-  fd_derivative(nseg, dtheta, dxshift, d2C, d3C);
+  struct vortex_filament filament1;
+  initialize_filaments(filament1, nseg, dtheta, theta, a, C, xshift, dxshift);
 
-  // 3. Compute the Frenet-Serret frame, curvature, and torsion
-  double sigma[nseg], kappa[nseg], tau[nseg];
-  coord Tvec[nseg], Nvec[nseg], Bvec[nseg];
-
-  for (int i = 0; i < nseg; i++){    
-    foreach_dimension(){            
-      Tvec[i].x =  dC[i].x/sqrt(vecdot( dC[i],  dC[i]));
-      Nvec[i].x = d2C[i].x/sqrt(vecdot(d2C[i], d2C[i]));
-    }
-    sigma[i] = sqrt(vecdot( dC[i],  dC[i]));
-    Bvec[i] = vecdotproduct(Tvec[i], Nvec[i]);   
-    
-    kappa[i] = sqrt(vecdot(d2C[i], d2C[i]))/sq(sigma[i]);
-    coord var1 = vecdotproduct(dC[i], d2C[i]);
-    tau[i] = vecdot(var1, d3C[i])/vecdot(var1,var1);    
-  }
-
+  // Display the curve and the Frenet-Serret frame
   {
     view (camera="iso");  
-    draw_space_curve_with_vectors(nseg, C, Tvec, Nvec, Bvec, scale=0.25);   
+    draw_space_curve_with_vectors(filament1.nseg, filament1.C, filament1.Tvec, filament1.Nvec, filament1.Bvec, scale=0.25);   
     save ("prescribed_curve_with_vectors.png");
-  }
-
-  // 4. Compute the arc-lenght coordinate and cumulative torsion
-  double ell[nseg], varphi0[nseg];
-  memset (ell,     0, nseg*sizeof (double));
-  memset (varphi0, 0, nseg*sizeof (double));  
-  for (int i = 0; i < nseg-1; i++){
-    ell[i+1] = ell[i] + sigma[i+1]*dtheta;
-    varphi0[i+1] = varphi0[i] + sigma[i+1]*tau[i+1]*dtheta;
   }
 
   FILE *fp = fopen("curve.txt", "w"); 
   for (int i = 0; i < nseg; i++){
-    fprintf (fp, "%d %g %g %g %g %g %g %g %g %g \n", i, theta[i], 
-         C[i].x, C[i].y, C[i].z, 
-         sigma[i], kappa[i], tau[i], 
-         ell[i], varphi0[i]);
+    fprintf (fp, "%d %g %g %g %g %g %g %g %g %g \n", i, filament1.theta[i], 
+         filament1.C[i].x, filament1.C[i].y, filament1.C[i].z, 
+         filament1.sigma[i], filament1.kappa[i], filament1.tau[i], 
+         filament1.s[i], filament1.varphi0[i]);
   }
   
-  // 3. We refine close to the curve
+  // We refine close to the curve
   scalar dmin[];
   for (int i = (maxlevel-minlevel-1); i >= 0; i--){
     foreach(){
-      coord pcar = {x,y,z};
-      struct vortex_filament params = {nseg, theta, C, Tvec, Nvec, Bvec, ell, pcar, sigma, kappa, tau, varphi0, a};
+      struct vortex_filament params;
+      params = filament1;
+      params.pcar = (coord){x,y,z};
       dmin[] = 0;
       dmin[] = (get_min_distance(spatial_period=0, max_distance=4*L0, vortex=&params) < (i+1)*a[0])*noise();    
     }
@@ -142,8 +117,9 @@ int main()
   double Uc = 1.0;
   // 4. Get the local coordinates in the Frenet-Serret Frame  
   foreach(){
-    coord pcar = {x,y,z};
-    struct vortex_filament params = {nseg, theta, C, Tvec, Nvec, Bvec, ell, pcar, sigma, kappa, tau, varphi0, a};
+    struct vortex_filament params;
+    params = filament1;
+    params.pcar = (coord){x,y,z};    
     struct local_filament vortex1 = get_local_coordinates(spatial_period=0, max_distance=4*L0, vortex=&params);
     
     if (vortex1.near == 1){

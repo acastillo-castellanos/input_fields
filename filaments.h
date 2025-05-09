@@ -668,6 +668,48 @@ void fd_derivative( int n, double dtheta, coord shift, coord *X, coord *dX){
   }
 }
 
+/** 
+ Finally, we create a macro so we can initialize the vortex filaments more
+ easily
+*/
+macro initialize_filaments (struct vortex_filament filament, int nseg, double dtheta, double* theta, double* a, coord* C, coord xshift, coord dxshift)
+{
+  // Find the 1st, 2nd, and 3rd derivatives of C
+  coord dC[nseg], d2C[nseg], d3C[nseg];
+  fd_derivative(nseg, dtheta,  xshift,   C,  dC);
+  fd_derivative(nseg, dtheta, dxshift,  dC, d2C);
+  fd_derivative(nseg, dtheta, dxshift, d2C, d3C);
+
+  // Compute the Frenet-Serret frame, curvature, and torsion
+  double sigma[nseg], kappa[nseg], tau[nseg];
+  coord Tvec[nseg], Nvec[nseg], Bvec[nseg];
+
+  for (int i = 0; i < nseg; i++){    
+    foreach_dimension(){            
+      Tvec[i].x =  dC[i].x/sqrt(vecdot( dC[i],  dC[i]));      
+      Nvec[i].x = d2C[i].x/sqrt(vecdot(d2C[i], d2C[i]));      
+    }
+    sigma[i] = sqrt(vecdot( dC[i],  dC[i]));
+    Bvec[i] = vecdotproduct(Tvec[i], Nvec[i]);   
+    
+    kappa[i] = sqrt(vecdot(d2C[i], d2C[i]))/sq(sigma[i]);
+    coord var1 = vecdotproduct(dC[i], d2C[i]);    
+    tau[i] = vecdot(var1, d3C[i])/vecdot(var1,var1);        
+  }
+
+  // Compute the arc-lenght coordinate and cumulative torsion
+  double ell[nseg], varphi0[nseg];
+  memset (ell,     0, nseg*sizeof (double));
+  memset (varphi0, 0, nseg*sizeof (double));  
+  for (int i = 0; i < nseg-1; i++){
+    ell[i+1] = ell[i] + sigma[i+1]*dtheta;
+    varphi0[i+1] = varphi0[i] + sigma[i+1]*tau[i+1]*dtheta;
+  }
+
+  filament = (struct vortex_filament) {nseg, theta, C, Tvec, Nvec, Bvec, ell, (coord){0.,0.,0.}, sigma, kappa, tau, varphi0, a};
+
+}
+
 /**
 # References
 
