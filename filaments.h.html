@@ -1,0 +1,917 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <title> - filaments.h</title>
+        <link href="http://basilisk.fr/css/custom.css" rel="stylesheet" media="screen, projection" type="text/css" />
+    <link href="http://basilisk.fr/css/print.css" rel="stylesheet" media="print" type= "text/css" />
+        <!--[if IE]><link href="http://basilisk.fr/css/ie.css" rel="stylesheet" media="screen, projection" type="text/css" /><![endif]-->
+    <link rel="stylesheet" href="http://basilisk.fr/css/basilisk.css"/>
+    <script src="http://basilisk.fr/js/jquery.min.js" type="text/javascript"></script>
+    <script src="http://basilisk.fr/js/jquery-ui.packed.js" type="text/javascript"></script>
+    <script src="http://basilisk.fr/js/plots.js" type="text/javascript"></script>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css"
+      integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j"
+      crossorigin="anonymous"/>
+<script defer
+	src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"
+	integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ"
+	crossorigin="anonymous">
+</script>
+  </head>
+  <body>
+    <div id="doc3" class="yui-t1">
+        <div id="yui-main">
+          <div id="maincol" class="yui-b">
+<div id="userbox">
+  <noscript>
+    <a href="http://basilisk.fr/_login">Login</a>
+    <a href="http://basilisk.fr/_logout">Logout</a>
+  </noscript>
+  &nbsp;
+  <a id="loginlink" class="login" href="http://basilisk.fr/_login">Login / Get an account</a>
+  <a id="logoutlink" class="login" href="http://basilisk.fr/_logout">Logout <span id="logged_in_user"></span></a>
+</div>
+<ul class="tabs">
+  <li class=selected><a href="http://basilisk.fr/filaments.h">view</a></li><li><a href="http://basilisk.fr/filaments.h?history">history</a></li>
+</ul>
+<div id="content">
+        <h1 class="pageTitle"><a href="http://basilisk.fr/filaments.h">filaments.h</a></h1>
+  <ul class="messages" id="messages"></ul>
+  <div id="status"></div>
+    <div id="TOC">
+<ul>
+<li><a href="#curved-vortex-filaments"
+id="toc-curved-vortex-filaments">Curved vortex filaments</a>
+<ul>
+<li><a href="#curvilinear-coordinate-system"
+id="toc-curvilinear-coordinate-system">Curvilinear coordinate
+system</a></li>
+<li><a href="#frenetserret-basis"
+id="toc-frenetserret-basis">Frenet–Serret basis</a></li>
+<li><a href="#position-vector-in-the-frenet-serret-frame"
+id="toc-position-vector-in-the-frenet-serret-frame">Position <span class="dt">vector</span> in
+the Frenet-Serret frame</a>
+<ul>
+<li><a href="#introducing-the-two-local-cartesian-coordinates"
+id="toc-introducing-the-two-local-cartesian-coordinates">Introducing the
+two local Cartesian coordinates</a></li>
+<li><a href="#introducing-the-local-radial-and-angular-coordinates"
+id="toc-introducing-the-local-radial-and-angular-coordinates">Introducing
+the local radial and angular coordinates</a></li>
+<li><a href="#a-locally-orthogonal-basis"
+id="toc-a-locally-orthogonal-basis">A Locally Orthogonal basis</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#representation-of-vortex-filaments-in-basilisk"
+id="toc-representation-of-vortex-filaments-in-basilisk">Representation
+of vortex filaments in Basilisk</a>
+<ul>
+<li><a
+href="#vortex_filament-defines-the-properties-of-a-vortex-filament"
+id="toc-vortex_filament-defines-the-properties-of-a-vortex-filament"><em>vortex_filament</em>:
+defines the properties of a vortex filament</a></li>
+<li><a href="#interpolate-values-using-cubic-splines"
+id="toc-interpolate-values-using-cubic-splines">Interpolate Values Using
+Cubic Splines</a>
+<ul>
+<li><a
+href="#gsl_interp1d_vector-performs-1d-interpolation-on-a-vector-using-cubic-splines"
+id="toc-gsl_interp1d_vector-performs-1d-interpolation-on-a-vector-using-cubic-splines"><em>gsl_interp1d_vector()</em>:
+performs 1D interpolation on a <span class="dt">vector</span> using cubic splines</a></li>
+<li><a
+href="#gsl_interp1d_scalar-performs-1d-interpolation-on-a-scalar-using-cubic-splines"
+id="toc-gsl_interp1d_scalar-performs-1d-interpolation-on-a-scalar-using-cubic-splines"><em>gsl_interp1d_scalar()</em>:
+performs 1D interpolation on a <span class="dt">scalar</span> using cubic splines</a></li>
+</ul></li>
+<li><a
+href="#project-a-point-onto-the-frenet-frame-of-a-vortex-filament"
+id="toc-project-a-point-onto-the-frenet-frame-of-a-vortex-filament">Project
+a Point onto the Frenet Frame of a Vortex Filament</a>
+<ul>
+<li><a href="#frenet_projection-projects-a-point-onto-the-frenet-frame"
+id="toc-frenet_projection-projects-a-point-onto-the-frenet-frame"><em>frenet_projection()</em>:
+projects a point onto the Frenet frame</a></li>
+<li><a
+href="#frenet_projection_min-find-the-position-with-the-minimum-projection-on-the-frenet-frame"
+id="toc-frenet_projection_min-find-the-position-with-the-minimum-projection-on-the-frenet-frame"><em>frenet_projection_min()</em>:
+find the position with the minimum projection on the Frenet
+frame</a></li>
+<li><a
+href="#get_local_coordinates-computes-the-coordinates-in-the-local-frame"
+id="toc-get_local_coordinates-computes-the-coordinates-in-the-local-frame"><em>get_local_coordinates()</em>:
+computes the coordinates in the local frame</a></li>
+</ul></li>
+<li><a
+href="#compute-the-finite-difference-derivative-of-a-coordinate-array"
+id="toc-compute-the-finite-difference-derivative-of-a-coordinate-array">Compute
+the Finite Difference Derivative of a Coordinate Array</a>
+<ul>
+<li><a
+href="#fd_derivative-calculates-the-first-derivative-of-a-coordinate-array-using-finite-differences"
+id="toc-fd_derivative-calculates-the-first-derivative-of-a-coordinate-array-using-finite-differences"><em>fd_derivative()</em>:
+calculates the first derivative of a coordinate array using finite
+differences</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+<h1 id="curved-vortex-filaments">Curved vortex filaments</h1>
+<p>This section borrows from the development for a general curved vortex
+presented by <a href="#callegari1978">Callegari and Ting (1978)</a> and
+notes from the book by Maurice Rossi, Ivan Delbende, Stéphane Le Dizès,
+and others.</p>
+<h2 id="curvilinear-coordinate-system">Curvilinear coordinate
+system</h2>
+<p>A curvilinear coordinate system can be defined starting from the
+orthogonal Cartesian one. If <span class="math inline">x</span>, <span
+class="math inline">y</span>, <span class="math inline">z</span> are the
+Cartesian coordinates, the curvilinear ones, <span
+class="math inline">u</span>, <span class="math inline">v</span>, <span
+class="math inline">w</span>, can be expressed as smooth functions of
+<span class="math inline">x</span>, <span class="math inline">y</span>,
+<span class="math inline">z</span>, according to <span
+class="math inline">u = u(x,y,z)</span>, <span class="math inline">v =
+v(x,y,z)</span>, and <span class="math inline">w = w(x,y,z)</span>,
+which can be inverted as <span class="math inline">x = x(u,v,w)</span>,
+<span class="math inline">y = y(u,v,w)</span>, <span
+class="math inline">z = z(u,v,w)</span>. The infinitesimal increment
+<span class="math inline">d\boldsymbol{r}</span> is the same regardless
+the coordinate system. For instance, starting from Cartesian
+coordinates, the infinitesimal increment <span
+class="math inline">d\boldsymbol{r}=(dx,dy,dz)</span> can be written as:
+<span class="math display">
+\begin{aligned}
+  d\boldsymbol{r} =\frac{\partial\boldsymbol{r}}{\partial u} du
+  + \frac{\partial\boldsymbol{r}}{\partial v} dv
+  + \frac{\partial\boldsymbol{r}}{\partial w} dw
+\end{aligned}
+</span> or alternatively as <span class="math display">
+\begin{aligned}
+  d\boldsymbol{r} =
+  h_u du \boldsymbol{\hat{e}}_u  + h_v dv \boldsymbol{\hat{e}}_v + h_w
+dw \boldsymbol{\hat{e}}_w
+\end{aligned}
+</span> where <span class="math inline">h_u</span>, <span
+class="math inline">h_v</span>, and <span
+class="math inline">h_w</span>, are the scale (also known as Lamé)
+coefficients <span class="math display">
+\begin{aligned}
+  h_u \equiv \sqrt{ \frac{\partial\boldsymbol{r}}{\partial u} \cdot
+\frac{\partial\boldsymbol{r}}{\partial u} }, \quad
+  h_v \equiv \sqrt{ \frac{\partial\boldsymbol{r}}{\partial v} \cdot
+\frac{\partial\boldsymbol{r}}{\partial v} }, \quad
+  h_w \equiv \sqrt{ \frac{\partial\boldsymbol{r}}{\partial w} \cdot
+\frac{\partial\boldsymbol{r}}{\partial w} }
+\end{aligned}
+</span> and <span class="math inline">\boldsymbol{e}_u</span>, <span
+class="math inline">\boldsymbol{e}_v</span>, and <span
+class="math inline">\boldsymbol{e}_w</span>, are the curvilinear
+orthonormal basis vectors <span class="math display">
+\begin{aligned}
+  \boldsymbol{\hat{e}}_u = \frac{1}{h_u}
+\frac{\partial\boldsymbol{r}}{\partial u}, \quad
+  \boldsymbol{\hat{e}}_v = \frac{1}{h_v}
+\frac{\partial\boldsymbol{r}}{\partial v}, \quad
+  \boldsymbol{\hat{e}}_w = \frac{1}{h_w}
+\frac{\partial\boldsymbol{r}}{\partial w}
+\end{aligned}
+</span></p>
+<p>For instance, in this system, the elementary arc length reads <span
+class="math display">
+\begin{aligned}  
+  ds \equiv
+  \sqrt{d\boldsymbol{r}\cdot d\boldsymbol{r}} =
+  \sqrt{ (h_u du)^2 + (h_v dv)^2 + (h_w dw)^2 }
+\end{aligned}
+</span> while the divergence of a <span class="dt">vector</span> field <span
+class="math inline">\boldsymbol{v}</span> reads as <span
+class="math display">
+\begin{aligned}
+  \nabla\cdot\boldsymbol{v} =
+  \frac{1}{h_u h_v h_w}
+  \left[
+  \frac{ \partial(v_u h_v h_w) }{\partial u}  +
+  \frac{ \partial(v_v h_u h_w) }{\partial v}  +
+  \frac{ \partial(v_w h_v h_u) }{\partial w}
+  \right]
+\end{aligned}
+</span></p>
+<h2 id="frenetserret-basis">Frenet–Serret basis</h2>
+<p>Now, let us define a curvilinear orthogonal basis associated with a
+reference space curve <span class="math inline">\mathcal{C}(s)</span>,
+which lies in the filament. Here <span class="math inline">s</span> is
+the arc length along the initial curve measured from a given reference
+point. Each point along <span class="math inline">\mathcal{C}(s)</span>
+is characterized by its position <span
+class="math inline">\boldsymbol{x}_c</span>, local curvature <span
+class="math inline">\kappa(s)</span>, local torsion <span
+class="math inline">\tau(s)</span>, and the corresponding Frenet–Serret
+frame composed of three vectors <span
+class="math inline">(\boldsymbol{\hat{T}}, \boldsymbol{\hat{N}},
+\boldsymbol{\hat{B}})</span> <span class="math display">
+\begin{aligned}
+  \boldsymbol{\hat{T}}(s) \equiv \frac{d\boldsymbol{x}_c}{ds}, \quad
+  \boldsymbol{\hat{N}}(s) \equiv
+\frac{1}{\kappa}\frac{d\boldsymbol{\hat{T}}}{ds}, \quad
+  \boldsymbol{\hat{B}}(s) \equiv
+\boldsymbol{\hat{T}}\times\boldsymbol{\hat{N}}
+\end{aligned}
+</span> which are related to one another as: <span class="math display">
+\begin{aligned}
+\frac{d}{ds}
+\begin{bmatrix}
+\boldsymbol{\hat{T}} \\ \boldsymbol{\hat{N}} \\ \boldsymbol{\hat{B}}
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 &amp; \kappa(s) &amp; 0 \\
+-\kappa(s) &amp; 0 &amp; \tau(s) \\
+0 &amp; -\tau(s) &amp; 0
+\end{bmatrix}
+\begin{bmatrix}
+\boldsymbol{\hat{T}} \\ \boldsymbol{\hat{N}} \\ \boldsymbol{\hat{B}}
+\end{bmatrix}
+\end{aligned}
+</span></p>
+<p>Here <span class="math inline">\kappa(s, t)</span> and <span
+class="math inline">\tau(s, t)</span> are called the curvature and
+torsion at point <span class="math inline">O(s, t)</span> <span
+class="math display">
+\begin{aligned}
+\kappa(s, t) &amp;\equiv
+\frac{\lVert \boldsymbol{r}&#39;(s,t) \times
+\boldsymbol{r}&#39;&#39;(s,t) \rVert}{\lVert \boldsymbol{r}&#39;(s,t)
+\rVert^3}
+\\
+\tau(s, t) &amp;\equiv \frac{\lVert (\boldsymbol{r}&#39;(s,t) \times
+\boldsymbol{r}&#39;&#39;(s,t)) \cdot \boldsymbol{r}&#39;&#39;&#39;(s,t)
+\rVert}{\lVert \boldsymbol{r}&#39;(s,t) \times
+\boldsymbol{r}&#39;&#39;(s,t) \rVert^2}
+\end{aligned}
+</span></p>
+<h2 id="position-vector-in-the-frenet-serret-frame">Position <span class="dt">vector</span> in
+the Frenet-Serret frame</h2>
+<center>
+<figure>
+<img src="rossi1.png?1746776137"
+alt="Geometrical elements for a curved line (a) in the osculating plane (b) in the plane orthogonal to the vortex axis" />
+<figcaption aria-hidden="true">Geometrical elements for a curved line
+(a) in the osculating plane (b) in the plane orthogonal to the vortex
+axis</figcaption>
+</figure>
+</center>
+<h3 id="introducing-the-two-local-cartesian-coordinates">Introducing the
+two local Cartesian coordinates</h3>
+<p>The position of a given point <span class="math inline">M</span> can
+be expressed as <span class="math display">
+\begin{aligned}
+  \boldsymbol{x} = \boldsymbol{x}_c (s) + \boldsymbol{a}
+\end{aligned}
+</span> where <span class="math inline">\boldsymbol{a}</span> lies in
+the plane <span class="math inline">A_n(s)</span> perpendicular to <span
+class="math inline">\mathcal{C}(s)</span> <span class="math display">
+\begin{aligned}
+  \boldsymbol{a} = a_2 \boldsymbol{\hat{N}}(s) + a_3
+\boldsymbol{\hat{B}}(s)
+\end{aligned}
+</span></p>
+<h3
+id="introducing-the-local-radial-and-angular-coordinates">Introducing
+the local radial and angular coordinates</h3>
+<p>We introduce a local radial and angular coordinates <span
+class="math inline">(\rho,\phi)</span> in the plane <span
+class="math inline">A(s)</span> <span class="math display">
+\begin{aligned}
+  \boldsymbol{\hat{e}}_\rho &amp;=&amp; \cos\phi\boldsymbol{\hat{N}} +
+\sin\phi\boldsymbol{\hat{B}}
+  \\
+  \boldsymbol{\hat{e}}_\phi &amp;=&amp; -\sin\phi\boldsymbol{\hat{N}} +
+\cos\phi\boldsymbol{\hat{B}}
+\end{aligned}
+</span> such that <span class="math display">
+\begin{aligned}
+  \boldsymbol{x} = \boldsymbol{x}_c (s) + \rho
+\boldsymbol{e}_\rho(s,\phi)
+\end{aligned}
+</span> Differentiating with respect to <span
+class="math inline">s</span> gives <span class="math display">
+\begin{aligned}
+  \frac{d\boldsymbol{x}}{ds} &amp;=&amp; \frac{d\rho}{ds}
+\boldsymbol{\hat{e}}_\rho(s,\phi)
+    + \rho\left(\frac{d\phi}{ds} +
+\tau(s)\right)\boldsymbol{\hat{e}}_\phi(s,\phi)
+    + (1-\kappa(s)\rho\cos\phi)\boldsymbol{\hat{T}}(s)
+\end{aligned}
+</span> from which we deduce the following expression: <span
+class="math display">
+\begin{aligned}
+  d\boldsymbol{x} = d\rho \boldsymbol{\hat{e}}_\rho(s,\phi)
+    + \rho\left( d\phi +
+\tau(s)ds\right)\boldsymbol{\hat{e}}_\phi(s,\phi) +
+(1-\kappa(s)\rho\cos\phi)\boldsymbol{\hat{T}}(s) ds
+\end{aligned}
+</span></p>
+<h3 id="a-locally-orthogonal-basis">A Locally Orthogonal basis</h3>
+<p>Note that <span class="math inline">(\rho,\phi,s)</span> are
+curvilinear coordinates but they are not orthogonal in general. However,
+if we define an angle <span class="math inline">\varphi</span> <span
+class="math display">
+\begin{aligned}
+  \varphi = \phi - \varphi_0(s), \quad \text{ where } \quad
+  \frac{d\varphi_0}{ds} = \tau(s)
+\end{aligned}
+</span> then <span class="math inline">(\rho,\varphi,s)</span> form a
+set of curvilinear orthogonal coordinates. In this system, the
+infinitesimal increment reads as <span class="math display">
+\begin{aligned}
+  d\boldsymbol{x} &amp;=&amp;  h_\rho d\rho
+~\boldsymbol{\hat{e}}_\rho(s,\varphi)
+      + h_\varphi d\varphi ~\boldsymbol{\hat{e}}_\varphi(s,\varphi) +
+h_s ds ~\boldsymbol{\hat{T}}(s)
+\end{aligned}
+</span> where the Lamé coefficients read: <span class="math display">
+\begin{aligned}
+  h_\rho = 1, \quad
+  h_\varphi = \rho, \quad
+  h_s = (1-\kappa(s)\rho\cos(\varphi+\varphi_0(s)))
+\end{aligned}
+</span> and the new orthogonal basis reads: <span class="math display">
+\begin{aligned}
+  \begin{bmatrix}
+    \boldsymbol{\hat{e}}_\rho(\varphi,s) \\
+    \boldsymbol{\hat{e}}_\varphi(\varphi,s) \\
+    \boldsymbol{\hat{T}}(s)
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+  \cos(\varphi+\varphi_0(s)) &amp; \sin(\varphi+\varphi_0(s)) &amp; 0 \\
+  -\sin(\varphi+\varphi_0(s)) &amp; \cos(\varphi+\varphi_0(s)) &amp; 0
+\\
+  0 &amp; 0 &amp; 1
+  \end{bmatrix}
+  \begin{bmatrix}
+    \boldsymbol{\hat{N}}(s) \\
+    \boldsymbol{\hat{B}}(s) \\
+    \boldsymbol{\hat{T}}(s)
+  \end{bmatrix}
+\end{aligned}
+</span></p>
+For instance, in this system, the divergence of a <span class="dt">vector</span> field <span
+class="math inline">\boldsymbol{v}=(v_\rho\boldsymbol{\hat{e}}_\rho +
+v_\varphi\boldsymbol{\hat{e}}_\varphi + v_t\boldsymbol{\hat{T}})</span>
+would read as:
+<span class="math display">\begin{aligned}
+  \nabla\cdot\boldsymbol{v} &amp;=&amp;
+  \frac{1}{\rho h_s(\varphi,s)}\left(
+  \frac{d(\rho h_s(\varphi,s) v_\rho)}{d\rho} + \frac{d(h_s(\varphi,s)
+v_\varphi)}{d\varphi} + \frac{d(\rho v_t)}{ds}
+  \right)
+\end{aligned}</span>
+<h1 id="representation-of-vortex-filaments-in-basilisk">Representation
+of vortex filaments in Basilisk</h1>
+<h3
+id="vortex_filament-defines-the-properties-of-a-vortex-filament"><em>vortex_filament</em>:
+defines the properties of a vortex filament</h3>
+<p>This structure represents a vortex filament. It includes properties
+such as the number of segments, a <span class="dt">scalar</span> quantity, and various vectors
+representing the geometry and orientation of the filament.</p>
+<dl>
+<dt><em>nseg</em></dt>
+<dd>
+number of segments
+</dd>
+<dt><em>t</em></dt>
+<dd>
+arbitrary of parameter, usually <span class="math inline">\xi_n</span>
+</dd>
+<dt><em>C</em></dt>
+<dd>
+Cartesian coordinates describing the curve, <span
+class="math inline">\boldsymbol{x}_c \in \mathcal{C}(s(\xi_n))</span>
+</dd>
+<dt><em>Tvec</em></dt>
+<dd>
+tangent unit <span class="dt">vector</span>, <span
+class="math inline">\boldsymbol{\hat{T}}(s(\xi_n))</span>
+</dd>
+<dt><em>Nvec</em></dt>
+<dd>
+normal unit <span class="dt">vector</span>, <span
+class="math inline">\boldsymbol{\hat{N}}(s(\xi_n))</span>
+</dd>
+<dt><em>Bvec</em></dt>
+<dd>
+binormal unit <span class="dt">vector</span>, <span
+class="math inline">\boldsymbol{\hat{B}}(s(\xi_n))</span>
+</dd>
+<dt><em>s</em></dt>
+<dd>
+arclenght coordinate, <span class="math inline">s(\xi_n)</span> or <span
+class="math inline">\ell(\xi_n)</span>
+</dd>
+<dt><em>pcar</em></dt>
+<dd>
+placeholder for a Cartesian coordinate
+</dd>
+<dt><em>sigma</em></dt>
+<dd>
+local stretching factor, <span
+class="math inline">\sigma(s(\xi_n))</span> (optional)
+</dd>
+<dt><em>kappa</em></dt>
+<dd>
+local curvature, <span class="math inline">\kappa(s(\xi_n))</span>
+(optional)
+</dd>
+<dt><em>tau</em></dt>
+<dd>
+local torsion, <span class="math inline">\tau(s(\xi_n))</span>
+(optional)
+</dd>
+<dt><em>varphi0</em></dt>
+<dd>
+cumulative torsion, <span class="math inline">\varphi_0(s(\xi_n))</span>
+(optional)
+</dd>
+</dl>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;<a href=http://basilisk.fr/src/PointTriangle.h>PointTriangle.h</a>&quot;</span><span class="pp"><span id=275></span></span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> vortex_filament<span class="op">{</span><span id=276></span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>     nseg<span class="op">;</span>     <span class="co">// number of segments<span id=277></span></span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> theta<span class="op">;</span>    <span class="co">// arbitrary parametrisation of C  <span id=278></span></span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  coord<span class="op">*</span>  C<span class="op">;</span>        <span class="co">// cartesian coords of filament<span id=279></span></span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  coord<span class="op">*</span>  Tvec<span class="op">;</span>     <span class="co">// unit tangent <span class="dt">vector</span><span id=280></span></span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  coord<span class="op">*</span>  Nvec<span class="op">;</span>     <span class="co">// unit normal <span class="dt">vector</span><span id=281></span></span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  coord<span class="op">*</span>  Bvec<span class="op">;</span>     <span class="co">// unit binormal <span class="dt">vector</span><span id=282></span></span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> s<span class="op">;</span>        <span class="co">// arc-length coordinate<span id=283></span></span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  coord   pcar<span class="op">;</span>     <span class="co">// current point in Cartesian coordinates  <span id=284></span></span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> sigma<span class="op">;</span>    <span class="co">// Stretching factor<span id=285></span></span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> kappa<span class="op">;</span>    <span class="co">// Curvature<span id=286></span></span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> tau<span class="op">;</span>      <span class="co">// Torsion<span id=287></span></span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> varphi0<span class="op">;</span>  <span class="co">// Cumulative torsion<span id=288></span></span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span><span class="op">*</span> a<span class="op">;</span>        <span class="co">// Core size<span id=289></span></span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">};</span><span id=290></span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span id=291></span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> output_filament<span class="op">{</span>  <span id=292></span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bool</span> near<span class="op">;</span>       <span class="co">// flag based on distance from C<span id=293></span></span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> theta<span class="op">;</span>    <span class="co">// arbitrary parametrisation of C  <span id=294></span></span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  coord  C<span class="op">;</span>        <span class="co">// cartesian coords of filament<span id=295></span></span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  coord  Tvec<span class="op">;</span>     <span class="co">// unit tangent <span class="dt">vector</span><span id=296></span></span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  coord  Nvec<span class="op">;</span>     <span class="co">// unit normal <span class="dt">vector</span><span id=297></span></span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  coord  Bvec<span class="op">;</span>     <span class="co">// unit binormal <span class="dt">vector</span><span id=298></span></span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> s<span class="op">;</span>        <span class="co">// arc-length coordinate<span id=299></span></span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  coord  pcar<span class="op">;</span>     <span class="co">// current point in Cartesian coordinates  <span id=300></span></span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> sigma<span class="op">;</span>    <span class="co">// Stretching factor<span id=301></span></span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> kappa<span class="op">;</span>    <span class="co">// Curvature<span id=302></span></span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> tau<span class="op">;</span>      <span class="co">// Torsion<span id=303></span></span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> varphi0<span class="op">;</span>  <span class="co">// Cumulative torsion<span id=304></span></span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> a<span class="op">;</span>        <span class="co">// Core size<span id=305></span></span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  coord Mcar<span class="op">;</span>      <span class="co">//<span id=306></span></span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  coord Mrad<span class="op">;</span>      <span class="co">//<span id=307></span></span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="op">};</span><span id=308></span><span id=309></span><span id=310></span></span></code></pre></div>
+<h2 id="interpolate-values-using-cubic-splines">Interpolate Values Using
+Cubic Splines</h2>
+<h3
+id="gsl_interp1d_vector-performs-1d-interpolation-on-a-vector-using-cubic-splines"><em>gsl_interp1d_vector()</em>:
+performs 1D interpolation on a <span class="dt">vector</span> using cubic splines</h3>
+<p>This function performs 1D interpolation on a <span class="dt">vector</span> using cubic
+splines from the GNU Scientific Library (GSL). It takes discretized
+coord values <code>V0</code> at given spatial coordinate
+<code>theta0</code> and interpolates to find the corresponding value at
+a coordinate <code>thetaq</code>.</p>
+<p>The arguments and their descriptions are:</p>
+<dl>
+<dt><em>nseg</em></dt>
+<dd>
+number of segments
+</dd>
+<dt><em>theta0</em></dt>
+<dd>
+array with the coordinates <span class="math inline">\theta_0</span>
+</dd>
+<dt><em>V0</em></dt>
+<dd>
+array with the coord values <span class="math inline">V_0</span>
+</dd>
+<dt><em>thetaq</em></dt>
+<dd>
+target value at which to interpolate <span
+class="math inline">V_q</span>
+</dd>
+</dl>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#pragma autolink -lgsl -lgslcblas<span id=336></span></span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gsl/gsl_spline.h&gt;</span><span class="pp"><span id=337></span></span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>coord <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span> <span class="dt">int</span> nseg<span class="op">,</span> <span class="dt">double</span><span class="op">*</span> theta0<span class="op">,</span> coord <span class="op">*</span> V0<span class="op">,</span> <span class="dt">double</span> thetaq<span class="op">){</span><span id=338></span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  coord Vq<span class="op">;</span><span id=339></span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  gsl_interp_accel <span class="op">*</span>acc <span class="op">=</span> gsl_interp_accel_alloc<span class="op">();</span><span id=340></span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span id=341></span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <a href=http://basilisk.fr/Basilisk%20C#foreach_dimension>foreach_dimension</a><span class="op">(){</span><span id=342></span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> <span class="op">*</span>V_x<span class="op">;</span><span id=343></span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    V_x <span class="op">=</span> <a href=http://man7.org/linux/man-pages/man3/malloc.3.html>malloc</a><span class="op">(</span><span class="kw">sizeof</span><span class="op">(</span><span class="dt">double</span><span class="op">)*</span>nseg<span class="op">);</span><span id=344></span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nseg<span class="op">;</span> i<span class="op">++)</span><span id=345></span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      V_x<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> V0<span class="op">[</span>i<span class="op">].</span>x<span class="op">;</span><span id=346></span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span id=347></span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    gsl_spline <span class="op">*</span>spline_x <span class="op">=</span> gsl_spline_alloc<span class="op">(</span>gsl_interp_cspline<span class="op">,</span> nseg<span class="op">);</span><span id=348></span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    gsl_spline_init<span class="op">(</span>spline_x<span class="op">,</span> theta0<span class="op">,</span> V_x<span class="op">,</span> nseg<span class="op">);</span><span id=349></span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    Vq<span class="op">.</span>x <span class="op">=</span> gsl_spline_eval <span class="op">(</span>spline_x<span class="op">,</span> thetaq<span class="op">,</span> acc<span class="op">);</span><span id=350></span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    gsl_spline_free <span class="op">(</span>spline_x<span class="op">);</span><span id=351></span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/free.3.html>free</a><span class="op">(</span>V_x<span class="op">);</span><span id=352></span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=353></span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  gsl_interp_accel_free <span class="op">(</span>acc<span class="op">);</span><span id=354></span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> Vq<span class="op">;</span><span id=355></span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=356></span><span id=357></span></span></code></pre></div>
+<h3
+id="gsl_interp1d_scalar-performs-1d-interpolation-on-a-scalar-using-cubic-splines"><em>gsl_interp1d_scalar()</em>:
+performs 1D interpolation on a <span class="dt">scalar</span> using cubic splines</h3>
+<p>This function performs 1D interpolation on a <span class="dt">scalar</span> using cubic
+splines from the GNU Scientific Library (GSL). It takes discretized
+<span class="dt">scalar</span> values <code>P0</code> at given spatial coordinate
+<code>theta0</code> and interpolates to find the corresponding value at
+a coordinate <code>thetaq</code>.</p>
+<p>The arguments and their descriptions are:</p>
+<dl>
+<dt><em>nseg</em></dt>
+<dd>
+number of segments
+</dd>
+<dt><em>theta0</em></dt>
+<dd>
+array with the coordinates <span class="math inline">\theta_0</span>
+</dd>
+<dt><em>P0</em></dt>
+<dd>
+array with the <span class="dt">scalar</span> values <span class="math inline">P_0</span>
+</dd>
+<dt><em>thetaq</em></dt>
+<dd>
+target value at which to interpolate <span
+class="math inline">P_q</span>
+</dd>
+</dl>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> <a href=filaments.h#gsl_interp1d_scalar>gsl_interp1d_scalar</a><span class="op">(</span> <span class="dt">int</span> nseg<span class="op">,</span> <span class="dt">double</span><span class="op">*</span> theta0<span class="op">,</span> <span class="dt">double</span> <span class="op">*</span> P0<span class="op">,</span> <span class="dt">double</span> thetaq<span class="op">){</span><span id=381></span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> Pq<span class="op">;</span><span id=382></span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  gsl_interp_accel <span class="op">*</span>acc <span class="op">=</span> gsl_interp_accel_alloc<span class="op">();</span><span id=383></span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  gsl_spline <span class="op">*</span>spline_x <span class="op">=</span> gsl_spline_alloc<span class="op">(</span>gsl_interp_cspline<span class="op">,</span> nseg<span class="op">);</span><span id=384></span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  gsl_spline_init<span class="op">(</span>spline_x<span class="op">,</span> theta0<span class="op">,</span> P0<span class="op">,</span> nseg<span class="op">);</span><span id=385></span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  Pq <span class="op">=</span> gsl_spline_eval <span class="op">(</span>spline_x<span class="op">,</span> thetaq<span class="op">,</span> acc<span class="op">);</span><span id=386></span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  gsl_spline_free <span class="op">(</span>spline_x<span class="op">);</span><span id=387></span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  gsl_interp_accel_free <span class="op">(</span>acc<span class="op">);</span><span id=388></span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> Pq<span class="op">;</span><span id=389></span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=390></span><span id=391></span></span></code></pre></div>
+<h2
+id="project-a-point-onto-the-frenet-frame-of-a-vortex-filament">Project
+a Point onto the Frenet Frame of a Vortex Filament</h2>
+<h3
+id="frenet_projection-projects-a-point-onto-the-frenet-frame"><em>frenet_projection()</em>:
+projects a point onto the Frenet frame</h3>
+<p>This function calculates the projection of a point <span
+class="math inline">M</span> onto the Frenet-Serret frame of a vortex
+filament at a specified position <span
+class="math inline">s(\xi_q)</span>. The Frenet frame <span
+class="math inline">(\boldsymbol{\hat{T}}, \boldsymbol{\hat{N}},
+\boldsymbol{\hat{B}})</span> is interpolated at this position.</p>
+<p>The function returns the dot product of the <span class="dt">vector</span> from the origin
+<span class="math inline">\boldsymbol{O}(s(\xi_q))</span> to the point
+<span class="math inline">\boldsymbol{M}</span> with the tangent <span class="dt">vector</span>
+<span class="math inline">\boldsymbol{\hat{T}}(s(\xi_q))</span>:</p>
+<p><span class="math display">
+(\boldsymbol{M} - \boldsymbol{O}(s(\xi_q))) \cdot
+\boldsymbol{\hat{T}}(s(\xi_q)).
+</span></p>
+<p>If the point <span class="math inline">\boldsymbol{M}</span> lies
+within the plane <span class="math inline">\mathcal{A}(s(\xi_q))</span>,
+the output of this function will be zero. This property will be utilized
+as the objective function to minimize when projecting points onto the
+Frenet-Serret frame.</p>
+<p>The arguments and their descriptions are:</p>
+<dl>
+<dt><em>tq</em></dt>
+<dd>
+double representing the position along the vortex filament where the
+projection is to be computed.
+</dd>
+<dt><em>params</em></dt>
+<dd>
+pointer to a <code>struct vortex_filament</code>, which contains the
+properties of the vortex filament, including the number of segments,
+coordinates, and Frenet frame vectors.
+</dd>
+</dl>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> <a href=filaments.h#frenet_projection>frenet_projection</a> <span class="op">(</span><span class="dt">double</span> thetaq<span class="op">,</span> <span class="dt">void</span> <span class="op">*</span>params<span class="op">){</span><span id=425></span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> vortex_filament <span class="op">*</span>p <span class="op">=</span> <span class="op">(</span><span class="kw">struct</span> vortex_filament <span class="op">*)</span> params<span class="op">;</span><span id=426></span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span id=427></span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  coord ccar<span class="op">,</span> frenet<span class="op">[</span><span class="dv">3</span><span class="op">];</span><span id=428></span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  ccar <span class="op">=</span> <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span> p<span class="op">-&gt;</span>nseg<span class="op">,</span> p<span class="op">-&gt;</span>theta<span class="op">,</span> p<span class="op">-&gt;</span>C<span class="op">,</span> thetaq<span class="op">);</span><span id=429></span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span id=430></span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  frenet<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span> p<span class="op">-&gt;</span>nseg<span class="op">,</span> p<span class="op">-&gt;</span>theta<span class="op">,</span> p<span class="op">-&gt;</span>Tvec<span class="op">,</span> thetaq<span class="op">);</span><span id=431></span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  frenet<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span> p<span class="op">-&gt;</span>nseg<span class="op">,</span> p<span class="op">-&gt;</span>theta<span class="op">,</span> p<span class="op">-&gt;</span>Nvec<span class="op">,</span> thetaq<span class="op">);</span><span id=432></span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  frenet<span class="op">[</span><span class="dv">2</span><span class="op">]</span> <span class="op">=</span> <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span> p<span class="op">-&gt;</span>nseg<span class="op">,</span> p<span class="op">-&gt;</span>theta<span class="op">,</span> p<span class="op">-&gt;</span>Bvec<span class="op">,</span> thetaq<span class="op">);</span><span id=433></span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span id=434></span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> vecdot<span class="op">(</span>vecdiff<span class="op">(</span>p<span class="op">-&gt;</span>pcar<span class="op">,</span> ccar<span class="op">),</span> frenet<span class="op">[</span><span class="dv">0</span><span class="op">]);</span> <span id=435></span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=436></span><span id=437></span></span></code></pre></div>
+<h3
+id="frenet_projection_min-find-the-position-with-the-minimum-projection-on-the-frenet-frame"><em>frenet_projection_min()</em>:
+find the position with the minimum projection on the Frenet frame</h3>
+<p>This function solves a minimization problem to find the position
+along a vortex filament where the projection of a point
+<code>pcar</code> onto the tangent <span class="dt">vector</span> of the Frenet-Serret frame is
+minimized. In other words, we search for <span
+class="math inline">\xi_q</span> such that : <span class="math display">
+(\boldsymbol{M} - \boldsymbol{O}(s(\xi_q))) \cdot
+\boldsymbol{\hat{T}}(s(\xi_q)) = 0
+</span></p>
+<p>It uses the Brent method from the GNU Scientific Library (GSL) to
+find the root of the projection function within a specified
+interval.</p>
+<p>The arguments and their descriptions are:</p>
+<dl>
+<dt><em>params</em></dt>
+<dd>
+pointer to a <code>struct vortex_filament</code>, which contains the
+properties of the vortex filament, including the number of segments,
+coordinates, and Frenet frame vectors.
+</dd>
+<dt><em>r</em></dt>
+<dd>
+an initial guess for <span class="math inline">\xi_q</span>
+</dd>
+</dl>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gsl/gsl_roots.h&gt;</span><span class="pp"><span id=466></span></span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;gsl/gsl_errno.h&gt;</span><span class="pp"><span id=467></span></span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> <a href=filaments.h#frenet_projection_min>frenet_projection_min</a><span class="op">(</span><span class="kw">struct</span> vortex_filament params<span class="op">,</span> <span class="dt">double</span> r<span class="op">)</span> <span class="op">{</span><span id=468></span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span id=469></span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> status<span class="op">,</span> verbose <span class="op">=</span> <span class="dv">0</span><span class="op">;</span><span id=470></span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> iter <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> max_iter <span class="op">=</span> <span class="dv">100</span><span class="op">;</span><span id=471></span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">const</span> gsl_root_fsolver_type <span class="op">*</span>T<span class="op">;</span><span id=472></span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  gsl_root_fsolver <span class="op">*</span>s<span class="op">;</span><span id=473></span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span id=474></span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> x_lo <span class="op">=</span> r <span class="op">-</span> <span class="dv">0</span><span class="er">.25</span><span class="op">,</span> x_hi <span class="op">=</span> r <span class="op">+</span> <span class="dv">0</span><span class="er">.25</span><span class="op">;</span><span id=475></span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  gsl_function F<span class="op">;</span><span id=476></span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span id=477></span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  F<span class="op">.</span>function <span class="op">=</span> <span class="op">&amp;</span><a href=filaments.h#frenet_projection>frenet_projection</a><span class="op">;</span><span id=478></span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  F<span class="op">.</span>params <span class="op">=</span> <span class="op">&amp;</span>params<span class="op">;</span><span id=479></span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span id=480></span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  T <span class="op">=</span> gsl_root_fsolver_brent<span class="op">;</span><span id=481></span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  s <span class="op">=</span> gsl_root_fsolver_alloc <span class="op">(</span>T<span class="op">);</span><span id=482></span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  gsl_set_error_handler_off<span class="op">();</span><span id=483></span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  gsl_root_fsolver_set <span class="op">(</span>s<span class="op">,</span> <span class="op">&amp;</span>F<span class="op">,</span> x_lo<span class="op">,</span> x_hi<span class="op">);</span><span id=484></span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span id=485></span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>verbose <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span><span id=486></span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/printf.3.html>printf</a> <span class="op">(</span><span class="st">&quot;using </span><span class="sc">%s</span><span class="st"> method</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">,</span> gsl_root_fsolver_name <span class="op">(</span>s<span class="op">));</span><span id=487></span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <a href=http://man7.org/linux/man-pages/man3/printf.3.html>printf</a> <span class="op">(</span><span class="st">&quot;</span><span class="sc">%5s</span><span class="st"> [</span><span class="sc">%9s</span><span class="st">, </span><span class="sc">%9s</span><span class="st">] </span><span class="sc">%9s</span><span class="st"> </span><span class="sc">%10s</span><span class="st"> </span><span class="sc">%9s\n</span><span class="st">&quot;</span><span class="op">,</span> <span class="st">&quot;iter&quot;</span><span class="op">,</span> <span class="st">&quot;lower&quot;</span><span class="op">,</span> <span class="st">&quot;upper&quot;</span><span class="op">,</span> <span class="st">&quot;root&quot;</span><span class="op">,</span> <span class="st">&quot;err&quot;</span><span class="op">,</span> <span class="st">&quot;err(est)&quot;</span><span class="op">);</span><span id=488></span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=489></span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span id=490></span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">do</span> <span class="op">{</span><span id=491></span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    iter<span class="op">++;</span><span id=492></span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    status <span class="op">=</span> gsl_root_fsolver_iterate <span class="op">(</span>s<span class="op">);</span><span id=493></span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> gsl_root_fsolver_root <span class="op">(</span>s<span class="op">);</span><span id=494></span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    x_lo <span class="op">=</span> gsl_root_fsolver_x_lower <span class="op">(</span>s<span class="op">);</span><span id=495></span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    x_hi <span class="op">=</span> gsl_root_fsolver_x_upper <span class="op">(</span>s<span class="op">);</span><span id=496></span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    status <span class="op">=</span> gsl_root_test_interval <span class="op">(</span>x_lo<span class="op">,</span> x_hi<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="fl">1e-8</span><span class="op">);</span><span id=497></span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span id=498></span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">((</span>status <span class="op">==</span> GSL_SUCCESS<span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">(</span>verbose <span class="op">==</span> <span class="dv">1</span><span class="op">)){</span><span id=499></span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>      <a href=http://man7.org/linux/man-pages/man3/printf.3.html>printf</a> <span class="op">(</span><span class="st">&quot;Converged:</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span><span id=500></span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>      <a href=http://man7.org/linux/man-pages/man3/printf.3.html>printf</a> <span class="op">(</span><span class="st">&quot;</span><span class="sc">%5d</span><span class="st"> [</span><span class="sc">%.7f</span><span class="st">, </span><span class="sc">%.7f</span><span class="st">] </span><span class="sc">%.7f</span><span class="st"> </span><span class="sc">%.7f\n</span><span class="st">&quot;</span><span class="op">,</span> iter<span class="op">,</span> x_lo<span class="op">,</span> x_hi<span class="op">,</span> r<span class="op">,</span> x_hi <span class="op">-</span> x_lo<span class="op">);</span><span id=501></span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=502></span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=503></span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> <span class="op">(</span>status <span class="op">==</span> GSL_CONTINUE <span class="op">&amp;&amp;</span> iter <span class="op">&lt;</span> max_iter<span class="op">);</span><span id=504></span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  gsl_root_fsolver_free <span class="op">(</span>s<span class="op">);</span><span id=505></span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span id=506></span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> r<span class="op">;</span><span id=507></span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=508></span><span id=509></span><span id=510></span></span></code></pre></div>
+<h3
+id="get_local_coordinates-computes-the-coordinates-in-the-local-frame"><em>get_local_coordinates()</em>:
+computes the coordinates in the local frame</h3>
+<p>This function computes the local coordinates required for the
+vorticity field. Each point <span class="math inline">M</span> is
+projected into the local Frenet-Serret frame to obtain a set of local
+coordinates, such that:</p>
+<p><span class="math display">
+\begin{aligned}
+\textit{i)} \quad\quad &amp;
+(\boldsymbol{M} - \boldsymbol{O}(s(\xi_q))) \cdot
+\boldsymbol{\hat{T}}(s(\xi_q)) = 0
+\\
+\textit{ii)} \quad\quad &amp;
+(\boldsymbol{M} - \boldsymbol{O}(s(\xi_q))) \cdot
+\boldsymbol{\hat{N}}(s(\xi_q)) = x_N
+\\
+\textit{iii)} \quad\quad &amp;
+(\boldsymbol{M} - \boldsymbol{O}(s(\xi_q))) \cdot
+\boldsymbol{\hat{B}}(s(\xi_q)) = x_B
+\end{aligned}
+</span></p>
+<p>This requires finding the value of <span
+class="math inline">s(\xi_q)</span> along each space curve that verifies
+<em>i)</em> through a minization process.</p>
+<p>Then, we use the local coordinates <span class="math inline">(x_N,
+x_B)</span> to define a local radial and angular coordinates: <span
+class="math display">
+\begin{aligned}
+x_\rho = \sqrt{x_N^2 + x_B^2}, &amp;&amp;
+x_\phi = \arctan(x_B,x_N)
+\end{aligned}
+</span></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> output_filament get_local_coordinates<span class="op">(</span><span id=545></span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> spatial_period<span class="op">,</span> <span id=546></span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> max_distance<span class="op">=</span>L0<span class="op">,</span> <span id=547></span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> vortex_filament <span class="op">*</span>vortex<span id=548></span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="op">)</span> <span class="op">{</span><span id=549></span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> output_filament local_coordinates <span class="op">=</span> <span class="op">{</span><span class="dv">0</span><span class="op">};</span> <span id=550></span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span id=551></span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  coord cart_coordinates<span class="op">,</span> radial_coordinates<span class="op">;</span> <span id=552></span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> min_distance <span class="op">=</span> <span class="fl">1e30</span><span class="op">,</span> min_theta <span class="op">=</span> <span class="dv">0</span><span class="op">;</span><span id=553></span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> local_radial_coord<span class="op">,</span> local_angular_coord<span class="op">;</span><span id=554></span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span id=555></span>  </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Iterate through each segment to find the segment closest to the point<span id=556></span></span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// this should give us a good starting point<span id=557></span></span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> vortex<span class="op">-&gt;</span>nseg<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span><span id=558></span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> current_distance <span class="op">=</span> vecdist2<span class="op">(</span>vortex<span class="op">-&gt;</span>pcar<span class="op">,</span> vortex<span class="op">-&gt;</span>C<span class="op">[</span>i<span class="op">]);</span><span id=559></span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>current_distance <span class="op">&lt;</span> min_distance<span class="op">)</span> <span class="op">{</span><span id=560></span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      min_distance <span class="op">=</span> current_distance<span class="op">;</span><span id=561></span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>      min_theta <span class="op">=</span> vortex<span class="op">-&gt;</span>theta<span class="op">[</span>i<span class="op">];</span><span id=562></span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=563></span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=564></span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span id=565></span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Adjust the initial theta guess if the curve has periodicity<span id=566></span></span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>spatial_period <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span><span id=567></span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    min_theta <span class="op">=</span> fmod<span class="op">(</span>min_theta <span class="op">+</span> spatial_period <span class="op">*</span> <span class="dv">2</span> <span class="op">*</span> pi<span class="op">,</span> spatial_period <span class="op">*</span> <span class="dv">2</span> <span class="op">*</span> pi<span class="op">);</span><span id=568></span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span id=569></span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span id=570></span>  </span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">// If the point is close enough to the vortex, refine the initial guess<span id=571></span></span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>min_distance <span class="op">&lt;</span> max_distance<span class="op">)</span> <span class="op">{</span><span id=572></span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span id=573></span>    </span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Find the value of xi<span id=574></span></span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> theta <span class="op">=</span> <a href=filaments.h#frenet_projection_min>frenet_projection_min</a><span class="op">(*</span>vortex<span class="op">,</span> min_theta<span class="op">);</span><span id=575></span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span id=576></span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Find the Cartesian coordinates of point O(xi)<span id=577></span></span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    coord Ocar <span class="op">=</span> <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span>vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>C<span class="op">,</span> theta<span class="op">);</span><span id=578></span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span id=579></span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Compute the Frenet-Serret frame vectors at the projected theta<span id=580></span></span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    coord Tvec<span class="op">,</span> Nvec<span class="op">,</span> Bvec<span class="op">;</span><span id=581></span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    Tvec <span class="op">=</span> <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span>vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>Tvec<span class="op">,</span> theta<span class="op">);</span><span id=582></span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    Nvec <span class="op">=</span> <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span>vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>Nvec<span class="op">,</span> theta<span class="op">);</span><span id=583></span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    Bvec <span class="op">=</span> <a href=filaments.h#gsl_interp1d_vector>gsl_interp1d_vector</a><span class="op">(</span>vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>Bvec<span class="op">,</span> theta<span class="op">);</span><span id=584></span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span id=585></span>    </span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Compute local coordinates in the Frenet-Serret frame<span id=586></span></span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    cart_coordinates<span class="op">.</span>x <span class="op">=</span> vecdot<span class="op">(</span>vecdiff<span class="op">(</span>vortex<span class="op">-&gt;</span>pcar<span class="op">,</span> Ocar<span class="op">),</span> Tvec<span class="op">);</span> <span class="co">// x_T (must be zero) <span id=587></span></span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    cart_coordinates<span class="op">.</span>y <span class="op">=</span> vecdot<span class="op">(</span>vecdiff<span class="op">(</span>vortex<span class="op">-&gt;</span>pcar<span class="op">,</span> Ocar<span class="op">),</span> Nvec<span class="op">);</span> <span class="co">// x_N <span id=588></span></span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    cart_coordinates<span class="op">.</span>z <span class="op">=</span> vecdot<span class="op">(</span>vecdiff<span class="op">(</span>vortex<span class="op">-&gt;</span>pcar<span class="op">,</span> Ocar<span class="op">),</span> Bvec<span class="op">);</span> <span class="co">// x_B<span id=589></span></span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span id=590></span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Convert local coordinates to radial coordinates<span id=591></span></span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    local_radial_coord <span class="op">=</span> sqrt<span class="op">(</span>vecdot<span class="op">(</span>cart_coordinates<span class="op">,</span> cart_coordinates<span class="op">));</span><span id=592></span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    local_angular_coord <span class="op">=</span> atan2<span class="op">(</span>cart_coordinates<span class="op">.</span>z<span class="op">,</span> cart_coordinates<span class="op">.</span>y<span class="op">);</span><span id=593></span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span id=594></span>    </span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Compute the torsion angle<span id=595></span></span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> torsion_angle <span class="op">=</span> <a href=filaments.h#gsl_interp1d_scalar>gsl_interp1d_scalar</a><span class="op">(</span>vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>varphi0<span class="op">,</span> theta<span class="op">);</span><span id=596></span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span id=597></span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Set radial coordinates<span id=598></span></span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    radial_coordinates<span class="op">.</span>x <span class="op">=</span> cart_coordinates<span class="op">.</span>x<span class="op">;</span><span id=599></span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    radial_coordinates<span class="op">.</span>y <span class="op">=</span> local_radial_coord<span class="op">;</span><span id=600></span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    radial_coordinates<span class="op">.</span>z <span class="op">=</span> local_angular_coord <span class="op">-</span> torsion_angle<span class="op">;</span><span id=601></span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span id=602></span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Then, we compute the other properties<span id=603></span></span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> s       <span class="op">=</span> <a href=filaments.h#gsl_interp1d_scalar>gsl_interp1d_scalar</a><span class="op">(</span> vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>s<span class="op">,</span>       theta<span class="op">);</span><span id=604></span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> sigma   <span class="op">=</span> <a href=filaments.h#gsl_interp1d_scalar>gsl_interp1d_scalar</a><span class="op">(</span> vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>sigma<span class="op">,</span>   theta<span class="op">);</span><span id=605></span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> kappa   <span class="op">=</span> <a href=filaments.h#gsl_interp1d_scalar>gsl_interp1d_scalar</a><span class="op">(</span> vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>kappa<span class="op">,</span>   theta<span class="op">);</span><span id=606></span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> tau     <span class="op">=</span> <a href=filaments.h#gsl_interp1d_scalar>gsl_interp1d_scalar</a><span class="op">(</span> vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>tau<span class="op">,</span>     theta<span class="op">);</span><span id=607></span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> varphi0 <span class="op">=</span> <a href=filaments.h#gsl_interp1d_scalar>gsl_interp1d_scalar</a><span class="op">(</span> vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>varphi0<span class="op">,</span> theta<span class="op">);</span><span id=608></span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> a       <span class="op">=</span> <a href=filaments.h#gsl_interp1d_scalar>gsl_interp1d_scalar</a><span class="op">(</span> vortex<span class="op">-&gt;</span>nseg<span class="op">,</span> vortex<span class="op">-&gt;</span>theta<span class="op">,</span> vortex<span class="op">-&gt;</span>a<span class="op">,</span>       theta<span class="op">);</span>    <span id=609></span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a><span id=610></span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    local_coordinates <span class="op">=</span> <span class="op">(</span><span class="kw">struct</span> output_filament<span class="op">){</span><span class="dv">1</span><span class="op">,</span> theta<span class="op">,</span> Ocar<span class="op">,</span> Tvec<span class="op">,</span> Nvec<span class="op">,</span> Bvec<span class="op">,</span> <span id=611></span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>      s<span class="op">,</span> vortex<span class="op">-&gt;</span>pcar<span class="op">,</span> sigma<span class="op">,</span> kappa<span class="op">,</span> tau<span class="op">,</span> varphi0<span class="op">,</span> a<span class="op">,</span> cart_coordinates<span class="op">,</span> radial_coordinates<span class="op">};</span> <span id=612></span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=613></span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> local_coordinates<span class="op">;</span><span id=614></span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=615></span><span id=616></span><span id=617></span><span id=618></span></span></code></pre></div>
+<h2
+id="compute-the-finite-difference-derivative-of-a-coordinate-array">Compute
+the Finite Difference Derivative of a Coordinate Array</h2>
+<h3
+id="fd_derivative-calculates-the-first-derivative-of-a-coordinate-array-using-finite-differences"><em>fd_derivative()</em>:
+calculates the first derivative of a coordinate array using finite
+differences</h3>
+<p>This function computes the first derivative of a coordinate array
+<code>X</code> using a central finite difference scheme. It handles the
+interior points using a standard central difference formula and applies
+a periodic boundary condition with an optional shift to the
+endpoints.</p>
+<p>The arguments and their descriptions are:</p>
+<dl>
+<dt><em>n</em></dt>
+<dd>
+integer representing the number of points in the coordinate array.
+</dd>
+<dt><em>dtheta</em></dt>
+<dd>
+double representing the spacing between consecutive points in the array,
+used as the step size in the finite difference calculation.
+</dd>
+<dt><em>shift</em></dt>
+<dd>
+a <code>coord</code> structure representing an optional shift applied to
+the periodic boundary condition.
+</dd>
+<dt><em>X</em></dt>
+<dd>
+pointer to a <code>coord</code> array representing the input coordinate
+values.
+</dd>
+<dt><em>dX</em></dt>
+<dd>
+pointer to a <code>coord</code> array where the computed derivatives
+will be stored.
+</dd>
+</dl>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> fd_derivative<span class="op">(</span> <span class="dt">int</span> n<span class="op">,</span> <span class="dt">double</span> dtheta<span class="op">,</span> coord shift<span class="op">,</span> coord <span class="op">*</span>X<span class="op">,</span> coord <span class="op">*</span>dX<span class="op">){</span><span id=648></span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">-</span><span class="dv">1</span><span class="op">;</span> i<span class="op">++){</span><span id=649></span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <a href=http://basilisk.fr/Basilisk%20C#foreach_dimension>foreach_dimension</a><span class="op">(){</span><span id=650></span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>      dX<span class="op">[</span>i<span class="op">].</span>x <span class="op">=</span> <span class="op">(</span>X<span class="op">[</span>i<span class="op">+</span><span class="dv">1</span><span class="op">].</span>x <span class="op">-</span> X<span class="op">[</span>i<span class="op">-</span><span class="dv">1</span><span class="op">].</span>x<span class="op">)/(</span><span class="dv">2</span><span class="op">*</span>dtheta<span class="op">);</span><span id=651></span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span><span id=652></span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=653></span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <a href=http://basilisk.fr/Basilisk%20C#foreach_dimension>foreach_dimension</a><span class="op">(){</span><span id=654></span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    dX<span class="op">[</span><span class="dv">0</span><span class="op">].</span>x   <span class="op">=</span> <span class="op">(</span>X<span class="op">[</span><span class="dv">1</span><span class="op">].</span>x <span class="op">-</span> X<span class="op">[</span>n<span class="op">-</span><span class="dv">2</span><span class="op">].</span>x <span class="op">+</span> shift<span class="op">.</span>x<span class="op">)/(</span><span class="dv">2</span><span class="op">*</span>dtheta<span class="op">);</span><span id=655></span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    dX<span class="op">[</span>n<span class="op">-</span><span class="dv">1</span><span class="op">].</span>x <span class="op">=</span> <span class="op">(</span>X<span class="op">[</span><span class="dv">1</span><span class="op">].</span>x <span class="op">-</span> X<span class="op">[</span>n<span class="op">-</span><span class="dv">2</span><span class="op">].</span>x <span class="op">+</span> shift<span class="op">.</span>x<span class="op">)/(</span><span class="dv">2</span><span class="op">*</span>dtheta<span class="op">);</span><span id=656></span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span><span id=657></span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span><span id=658></span><span id=659></span></span></code></pre></div>
+<h1 id="references">References</h1>
+<div class="bibtex">
+<table>
+<tr valign="top">
+<td align="right" class="bibtexnumber">
+[<a name="callegari1978">callegari1978</a>]
+</td>
+<td class="bibtexitem">
+<p>AJ Callegari and Lu Ting. Motion of a curved vortex filament with
+decaying vortical core and axial velocity. <em>SIAM Journal on Applied
+Mathematics</em>, 35(1):148–175, 1978.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="footer">
+inspired by <a href="http://github.com/jgm/gitit/tree/master/">gitit</a>,
+powered by <a href="http://basilisk.fr/src/darcsit/README">darcsit</a>
+</div>
+          </div>
+        </div>
+        <div id="sidebar" class="yui-b first">
+<div id="logo">
+  <a href="http://basilisk.fr/" alt="site logo" title="Go to top page"><img src="http://basilisk.fr/img/logo.png" /></a>
+</div>
+          <div class="sitenav">
+  <fieldset>
+    <legend>Site</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/Front Page">Front page</a></li>
+      <li><a href="http://basilisk.fr/_index">All pages</a></li>
+      <li><a href="http://basilisk.fr/_activity">Recent activity</a></li>
+            <li><a href="http://basilisk.fr/Help">Help</a></li>
+    </ul>
+    <form action="/_search" method="get" id="searchform">
+      <input type="text" name="patterns" id="patterns"/>
+      <input type="submit" value="Search"/>
+    </form>
+  </fieldset>
+  <fieldset>
+    <legend>Documentation</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/Tutorial">Tutorial</a></li>
+      <li><a href="http://basilisk.fr/src/INSTALL">Installation</a></li>
+      <li><a href="http://basilisk.fr/Basilisk C">Basilisk C</a></li>
+      <li><a href="http://basilisk.fr/src/README">Solvers and functions</a></li>
+      <li><a href="http://basilisk.fr/src/examples/README">Examples</a></li>
+      <li><a href="http://groups.google.com/d/forum/basilisk-fr">User forum</a></li>
+      <li><a href="http://basilisk.fr/sandbox/documentation">More documentation</a></li>
+    </ul>
+  </fieldset>
+  <fieldset>
+    <legend>Development</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/src/?history">Recent activity</a></li>
+      <li><a href="http://basilisk.fr/src/">Source code</a></li>
+      <li><a href="https://hub.darcs.net/basilisk/basilisk/browse/src">Darcs Hub</a></li>
+      <li><a href="http://basilisk.fr/src/test/README">Test cases</a></li>
+      <li><a href="http://basilisk.fr/sandbox/bugs/README">Bug reports</a></li>
+      <li><a href="http://basilisk.fr/src/Contributing">How to contribute</a></li>
+      <li><a href="http://basilisk.fr/sandbox/">Play in the sandbox</a></li>
+    </ul>
+  </fieldset>
+</div>
+                    <div class="pageTools">
+  <fieldset>
+    <legend>This page</legend>
+    <ul>
+      <li><a href="http://basilisk.fr/filaments.h?raw">Raw page source</a></li>
+      <li><a href="http://basilisk.fr/filaments.h?delete">Delete this page</a></li>
+    </ul>
+  </fieldset>
+</div>
+                            </div>
+    </div>
+    <script src="/js/status.js" type="text/javascript"></script>
+      </body>
+</html>
