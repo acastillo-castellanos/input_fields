@@ -287,7 +287,46 @@ struct vortex_filament{
   double* tau;      // Torsion
   double* varphi0;  // Cumulative torsion
   double* a;        // Core size
+  coord*  dC;       // 
+  coord*  d2C;      // 
+  coord*  d3C;      // 
 };
+
+void allocate_vortex_filament(struct vortex_filament* filament, int nseg) {
+  filament->nseg = nseg;
+  filament->theta = malloc(nseg * sizeof(double));
+  filament->C = malloc(nseg * sizeof(coord));
+  filament->Tvec = malloc(nseg * sizeof(coord));
+  filament->Nvec = malloc(nseg * sizeof(coord));
+  filament->Bvec = malloc(nseg * sizeof(coord));
+  filament->s = malloc(nseg * sizeof(double));
+  filament->sigma = malloc(nseg * sizeof(double));
+  filament->kappa = malloc(nseg * sizeof(double));
+  filament->tau = malloc(nseg * sizeof(double));
+  filament->varphi0 = malloc(nseg * sizeof(double));
+  filament->a = malloc(nseg * sizeof(double));
+  filament->dC = malloc(nseg * sizeof(coord));
+  filament->d2C = malloc(nseg * sizeof(coord));
+  filament->d3C = malloc(nseg * sizeof(coord));
+  filament->pcar = (coord) {0.0, 0.0, 0.0};
+}
+
+void free_vortex_filament(struct vortex_filament* filament) {
+    free(filament->theta);
+    free(filament->C);
+    free(filament->Tvec);
+    free(filament->Nvec);
+    free(filament->Bvec);
+    free(filament->s);
+    free(filament->sigma);
+    free(filament->kappa);
+    free(filament->tau);
+    free(filament->varphi0);
+    free(filament->a);
+    free(filament->dC);
+    free(filament->d2C);
+    free(filament->d3C);
+}
 
 struct local_filament{  
   bool near;       // flag based on distance from C
@@ -674,40 +713,41 @@ void fd_derivative( int n, double dtheta, coord shift, coord *X, coord *dX){
 */
 macro initialize_filaments (struct vortex_filament filament, int nseg, double dtheta, double* theta, double* a, coord* C, coord xshift, coord dxshift)
 {
-  // Find the 1st, 2nd, and 3rd derivatives of C
-  coord dC[nseg], d2C[nseg], d3C[nseg];
-  fd_derivative(nseg, dtheta,  xshift,   C,  dC);
-  fd_derivative(nseg, dtheta, dxshift,  dC, d2C);
-  fd_derivative(nseg, dtheta, dxshift, d2C, d3C);
+  
+  for (int i = 0; i < nseg; i++){   
+    filament.a[i] = a[i]; 
+    filament.theta[i] = theta[i]; 
+    foreach_dimension(){            
+      filament.C[i].x =  C[i].x;  
+    }
+  }  
+
+  // Find the 1st, 2nd, and 3rd derivatives of C  
+  fd_derivative(nseg, dtheta,  xshift,   filament.C,  filament.dC);
+  fd_derivative(nseg, dtheta, dxshift,  filament.dC, filament.d2C);
+  fd_derivative(nseg, dtheta, dxshift, filament.d2C, filament.d3C);
 
   // Compute the Frenet-Serret frame, curvature, and torsion
-  double sigma[nseg], kappa[nseg], tau[nseg];
-  coord Tvec[nseg], Nvec[nseg], Bvec[nseg];
-
-  for (int i = 0; i < nseg; i++){    
-    foreach_dimension(){            
-      Tvec[i].x =  dC[i].x/sqrt(vecdot( dC[i],  dC[i]));      
-      Nvec[i].x = d2C[i].x/sqrt(vecdot(d2C[i], d2C[i]));      
+  for (int i = 0; i < nseg; i++){   
+    foreach_dimension(){                      
+      filament.Tvec[i].x =  filament.dC[i].x/sqrt(vecdot( filament.dC[i],  filament.dC[i]));      
+      filament.Nvec[i].x = filament.d2C[i].x/sqrt(vecdot(filament.d2C[i], filament.d2C[i]));      
     }
-    sigma[i] = sqrt(vecdot( dC[i],  dC[i]));
-    Bvec[i] = vecdotproduct(Tvec[i], Nvec[i]);   
-    
-    kappa[i] = sqrt(vecdot(d2C[i], d2C[i]))/sq(sigma[i]);
-    coord var1 = vecdotproduct(dC[i], d2C[i]);    
-    tau[i] = vecdot(var1, d3C[i])/vecdot(var1,var1);        
+    filament.sigma[i] = sqrt(vecdot( filament.dC[i],  filament.dC[i]));
+    filament.Bvec[i] = vecdotproduct(filament.Tvec[i], filament.Nvec[i]);   
+      
+    filament.kappa[i] = sqrt(vecdot(filament.d2C[i], filament.d2C[i]))/sq(filament.sigma[i]);
+    coord var1 = vecdotproduct(filament.dC[i], filament.d2C[i]);    
+    filament.tau[i] = vecdot(var1, filament.d3C[i])/vecdot(var1,var1);        
   }
 
-  // Compute the arc-lenght coordinate and cumulative torsion
-  double ell[nseg], varphi0[nseg];
-  memset (ell,     0, nseg*sizeof (double));
-  memset (varphi0, 0, nseg*sizeof (double));  
+  // Compute the arc-lenght coordinate and cumulative torsion  
+  memset (filament.s,       0, nseg*sizeof (double));
+  memset (filament.varphi0, 0, nseg*sizeof (double));  
   for (int i = 0; i < nseg-1; i++){
-    ell[i+1] = ell[i] + sigma[i+1]*dtheta;
-    varphi0[i+1] = varphi0[i] + sigma[i+1]*tau[i+1]*dtheta;
+    filament.s[i+1] = filament.s[i] + filament.sigma[i+1]*dtheta;
+    filament.varphi0[i+1] = filament.varphi0[i] + filament.sigma[i+1]*filament.tau[i+1]*dtheta;
   }
-
-  filament = (struct vortex_filament) {nseg, theta, C, Tvec, Nvec, Bvec, ell, (coord){0.,0.,0.}, sigma, kappa, tau, varphi0, a};
-
 }
 
 /**
