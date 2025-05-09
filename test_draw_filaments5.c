@@ -155,9 +155,9 @@ int main()
     params3 = filament3;
     params3.pcar = (coord){x,y,z};  
     
-    struct local_filament vortex1 = get_local_coordinates(spatial_period=0, max_distance=4*L0, vortex=&params1);
-    struct local_filament vortex2 = get_local_coordinates(spatial_period=0, max_distance=4*L0, vortex=&params2);
-    struct local_filament vortex3 = get_local_coordinates(spatial_period=0, max_distance=4*L0, vortex=&params3);
+    struct local_filament vortex1 = get_local_coordinates(spatial_period=0, max_distance=0.5, vortex=&params1);
+    struct local_filament vortex2 = get_local_coordinates(spatial_period=0, max_distance=0.5, vortex=&params2);
+    struct local_filament vortex3 = get_local_coordinates(spatial_period=0, max_distance=0.5, vortex=&params3);
     
     // 5. We use the coordinates to compute the vorticity field
     if (vortex1.near == 1)
@@ -188,60 +188,3 @@ int main()
   free_vortex_filament(&filament2);
   free_vortex_filament(&filament3);
 }
-
-
-/** 
-
-## Outputs
-
-~~~gnuplot Prescribed curbe $\mathcal{C(\xi,t)}$
-set term pngcairo enhanced size 640,480 font ",12"
-set output 'curve.png'
-plot 'curve.txt' u 1:3 w lp title "C.x",\
-              "" u 1:4 w lp title "C.y",\
-              "" u 1:5 w lp title "C.z"
-set xlabel "index"
-set ylabel "value"
-~~~
-
-~~~gnuplot Strecthing coefficient $\sigma(\xi,t)$
-set term pngcairo enhanced size 640,480 font ",12"
-set output 'sigma.png'
-plot 'curve.txt' u 1:6 w lp title "sigma"
-set xlabel "index"
-set ylabel "value"
-~~~
-
-~~~gnuplot Curvature $\kappa(\xi,t)$
-set term pngcairo enhanced size 640,480 font ",12"
-set output 'kappa.png'
-plot 'curve.txt' u 1:7 w lp title "kappa"
-set xlabel "index"
-set ylabel "value"
-~~~
-
-~~~gnuplot Torsion $\tau(\xi,t)$
-set term pngcairo enhanced size 640,480 font ",12"
-set output 'tau.png'
-plot 'curve.txt' u 1:8 w lp title "tau"
-set xlabel "index"
-set ylabel "value"
-~~~
-
-~~~gnuplot Arc-lenght parameter $\ell(\xi,t)$
-set term pngcairo enhanced size 640,480 font ",12"
-set output 'arclength.png'
-plot 'curve.txt' u 1:9 w lp title "s"
-set xlabel "index"
-set ylabel "value"
-~~~
-
-~~~gnuplot Cumulative torsion $\varphi_0(\xi,t)$
-set term pngcairo enhanced size 640,480 font ",12"
-set output 'varphi.png'
-plot 'curve.txt' u 1:10 w lp title "varphi0"
-set xlabel "index"
-set ylabel "value"
-~~~
-
-*/
